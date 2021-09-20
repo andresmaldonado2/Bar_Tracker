@@ -3,4 +3,10 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="trainingMenuHeader">Training</string>
+    <string name="totalWeightHeader">Input total weight of bar:</string>
+    <string name="navBarButtonContentDescription">Opens navigation menu</string>
+    <string name="poundSwitchText">lb</string>
+    <string name="kilogramSwitchText">kg</string>
+    <string name="startWorkoutButtonContentDescription">Start Workout</string>
 </resources>

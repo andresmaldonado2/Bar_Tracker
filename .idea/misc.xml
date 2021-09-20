@@ -3,7 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/layout/activity_main.xml" value="0.20199275362318841" />
+        <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/drawable/button_border.xml" value="0.5069444444444444" />
+        <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/layout/activity_main.xml" value="0.5964063579820318" />
+        <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/layout/nav_bar_header.xml" value="0.4925925925925926" />
+        <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/layout/nav_header_main.xml" value="0.4925925925925926" />
+        <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/layout/nav_view_body.xml" value="0.33" />
       </map>
     </option>
   </component>

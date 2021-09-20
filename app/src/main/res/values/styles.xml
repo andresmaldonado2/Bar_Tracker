@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+    </style>
+    <style name="mainMenuSwitchStyle" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:colorControlActivated">@color/buttonRed</item>
+        <item name="android:colorForeground">@color/buttonRed</item>
+    </style>
+    <style name="navViewMenuButtons" parent="Theme.MaterialComponents.DayNight.NoActionBar.Bridge">
+
+    </style>
+</resources>

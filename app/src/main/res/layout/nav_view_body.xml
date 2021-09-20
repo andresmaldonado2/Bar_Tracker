@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.navigation.NavigationView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:background="@color/backgroundGrey"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/backgroundGrey"
+        android:clipChildren="false"
+        android:clipToPadding="false">
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_baseline_settings_24"
+            android:drawableTint="@color/white"
+            app:backgroundTint="@null"
+            android:background="@color/backgroundGrey"
+            android:theme="@style/navViewMenuButtons"
+            android:text="Button"
+            android:textColor="@color/white"
+            android:elevation="30dp"/>
+    </LinearLayout>
+</com.google.android.material.navigation.NavigationView>

@@ -7,4 +7,9 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="red">#FFFF0000</color>
+    <color name="navBarGrey">#FF2A2A2A</color>
+    <color name="backgroundGrey">#FF121212</color>
+    <color name="buttonRed">#FFB00020</color>
+    <color name="startWorkoutButtonRed">#FFCB4747</color>
 </resources>

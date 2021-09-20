@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navBar"
+    android:layout_width="match_parent"
+    android:layout_height="?actionBarSize"
+    android:layout_marginTop="8dp"
+    android:background="@color/backgroundGrey">
+
+    <ImageButton
+        android:id="@+id/navBarButton"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:backgroundTint="@color/backgroundGrey"
+        android:contentDescription="@string/navBarButtonContentDescription"
+        android:tint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.125"
+        app:srcCompat="@drawable/ic_baseline_view_headline_24" />
+
+    <!--TODO Make this an actual logo instead of just a placeholder-->
+    <TextView
+        android:id="@+id/logoPlaceHolder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fitness Logo"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/navBarButton"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
