@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="?actionBarSize"
     android:layout_marginTop="8dp"
-    android:background="@color/backgroundGrey">
+    android:background="@color/navBarGrey">
 
     <ImageButton
         android:id="@+id/navBarButton"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:backgroundTint="@color/backgroundGrey"
+        android:backgroundTint="@color/navBarGrey"
         android:contentDescription="@string/navBarButtonContentDescription"
         android:tint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -21,15 +21,15 @@
         app:srcCompat="@drawable/ic_baseline_view_headline_24" />
 
     <!--TODO Make this an actual logo instead of just a placeholder-->
-    <TextView
-        android:id="@+id/logoPlaceHolder"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Fitness Logo"
-        android:textColor="@color/white"
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/navBarButton"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_sigma_fitness_logo_white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

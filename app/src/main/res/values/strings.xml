@@ -9,4 +9,8 @@
     <string name="poundSwitchText">lb</string>
     <string name="kilogramSwitchText">kg</string>
     <string name="startWorkoutButtonContentDescription">Start Workout</string>
+    <string name="enterWeightOfBarContentDescription">Enter the weight of the bar here</string>
+    <string name="navViewSettings">Settings</string>
+    <string name="navViewTraining">Training</string>
+    <string name="navViewPastWorkouts">Past Workouts</string>
 </resources>
