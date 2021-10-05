@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@color/backgroundGrey"
+        android:layout_marginTop="?actionBarSize"
         android:clipChildren="false"
         android:clipToPadding="false">
 

@@ -8,6 +8,17 @@ import java.util.Arrays;
 
 public class CurveFitHelper
 {
+    public static double[][] dataPointsOnCurve(double[][] data)
+    {
+        double[][] calculatedPoints = new double[data.length][data[0].length];
+        double[] coefficients = vectorProjection(data);
+        for(int i = 0; i < data.length; i++)
+        {
+            calculatedPoints[i][0] = i;
+            calculatedPoints[i][1] = coefficients[0] + (coefficients[1] * i) + (coefficients[2] * Math.pow(i,2)) + (coefficients[3] * Math.pow(i, 3));
+        }
+        return calculatedPoints;
+    }
     public static double[] vectorProjection(double[][] positionData)
     {
         double[] yVector =  new double[positionData.length];
@@ -17,6 +28,7 @@ public class CurveFitHelper
         {
             yVector[i] = positionData[i][1];
         }
+        // Equation for this is ((X^t*X)^-1)*X^t*y
         double[] result = multiplyMatrices(multiplyMatrices(inverseMatrix(multiplyMatrices(transposedMatrix, matrix)), transposedMatrix), yVector);
         System.out.println(Arrays.toString(result));
         return (result);

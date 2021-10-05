@@ -186,4 +186,9 @@ public class CurveFitHelperTest
             }
         }
     }
+    @Test
+    public void testDataPointsOnCurve()
+    {
+
+    }
 }
