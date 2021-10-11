@@ -39,22 +39,20 @@ public class TrainingBarPathActivity extends AppCompatActivity
         RelativeLayout.LayoutParams rlParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
         rl.setBackgroundColor(backgroundColor);
         double[][] testData = new double[][]{
-                {0, 4},
-                {1, 1.5},
-                {2, 0},
-                {3, 3},
-                {4, 5},
-                {5, 4},
-                {6, 2}
+                {0,1},
+                {2,0},
+                {3,3},
+                {4,5},
+                {5,4}
         };
-        double[] calculatedData = CurveFitHelper.vectorProjection(testData);
+        double[][] calculatedData = CurveFitHelper.dataPointsOnCurve(testData, 3);
         ArrayList<Entry> dataPoints = new ArrayList<>();
         ArrayList<Entry> calculatedDataPoints = new ArrayList<>();
         for (int i = 0; i < testData.length; i++)
         {
             //TODO Research a better way to squash the double to float other than casting
             dataPoints.add(new Entry((float) testData[i][0], (float) testData[i][1]));
-            calculatedDataPoints.add(new Entry((float)CurveFitHelper.dataPointsOnCurve(testData)[i][0],(float)CurveFitHelper.dataPointsOnCurve(testData)[i][1]));
+            calculatedDataPoints.add(new Entry((float)calculatedData[i][0],(float)calculatedData[i][1]));
         }
         //TODO Customize the colors and such on the graph more, looks really basic right now
         testDataSet = new LineDataSet(dataPoints, "Test Data");

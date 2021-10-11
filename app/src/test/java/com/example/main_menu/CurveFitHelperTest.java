@@ -4,6 +4,8 @@ import com.example.main_menu.helpers.CurveFitHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
+
 public class CurveFitHelperTest
 {
     @Test
@@ -53,18 +55,40 @@ public class CurveFitHelperTest
     // TODO Results are accurate but I'm losing precision somewhere in the math, need to investigate further.
     // Appears as if at worst I have only 2 decimal places of accuracy
     // Very small chance the accuracy is fine and the things I'm checking against are the ones that are inaccurate
+
     @Test
-    public void testVectorProjection()
+    public void testQuadraticVectorProjection()
     {
         double[][] testData = new double[][]{
-        {0,1},
-        {2,0},
-        {3,3},
-        {4,5},
-        {5,4}
+                {-3, 7.5},
+                {-2, 3},
+                {-1, 0.5},
+                {0,1},
+                {1,3},
+                {2,6},
+                {3,14}
+        };
+        double[] expectedResults = new double[]{0.5714, 1, 1.1071};
+        double[] actualResults = CurveFitHelper.vectorProjection(testData,2);
+        double epsilon = 0.0001d;
+        for (int i = 0; i < expectedResults.length; i++)
+        {
+            assertEquals(expectedResults[i], actualResults[i], epsilon);
+        }
+    }
+
+    @Test
+    public void testCubicVectorProjection()
+    {
+        double[][] testData = new double[][]{
+            {0,1},
+            {2,0},
+            {3,3},
+            {4,5},
+            {5,4}
         };
         double[] expectedResults = new double[]{0.9973, -5.0755, 3.0678, -0.3868};
-        double[] actualResults = CurveFitHelper.vectorProjection(testData);
+        double[] actualResults = CurveFitHelper.vectorProjection(testData,3);
         double epsilon = 0.0001d;
         for (int i = 0; i < expectedResults.length; i++)
         {
@@ -189,6 +213,29 @@ public class CurveFitHelperTest
     @Test
     public void testDataPointsOnCurve()
     {
-
+        double[][] testData = new double[][]{
+                {0,1},
+                {2,0},
+                {3,3},
+                {4,5},
+                {5,4}
+        };
+        double[][] expectedMatrixResult = new double[][]{
+                {0,1},
+                {2,0},
+                {3,3},
+                {4,5},
+                {5,4}
+        };
+        double[][] actualMatrixResult = CurveFitHelper.dataPointsOnCurve(testData, 3);
+        double epsilon = 0.0001d;
+        System.out.println(Arrays.deepToString(actualMatrixResult));
+        for(int i = 0; i < expectedMatrixResult.length; i++)
+        {
+            for (int z = 0; z < expectedMatrixResult[0].length; z++)
+            {
+                assertEquals(expectedMatrixResult[i][z], actualMatrixResult[i][z], epsilon);
+            }
+        }
     }
 }

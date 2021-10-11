@@ -8,21 +8,21 @@ import java.util.Arrays;
 
 public class CurveFitHelper
 {
-    public static double[][] dataPointsOnCurve(double[][] data)
+    public static double[][] dataPointsOnCurve(double[][] data, int degree)
     {
         double[][] calculatedPoints = new double[data.length][data[0].length];
-        double[] coefficients = vectorProjection(data);
+        double[] coefficients = vectorProjection(data, degree);
         for(int i = 0; i < data.length; i++)
         {
-            calculatedPoints[i][0] = i;
-            calculatedPoints[i][1] = coefficients[0] + (coefficients[1] * i) + (coefficients[2] * Math.pow(i,2)) + (coefficients[3] * Math.pow(i, 3));
+            calculatedPoints[i][0] = data[i][0];
+            calculatedPoints[i][1] = coefficients[0] + (coefficients[1] * data[i][0]) + (coefficients[2] * Math.pow(data[i][0],2)) + (coefficients[3] * Math.pow(data[i][0], 3));
         }
         return calculatedPoints;
     }
-    public static double[] vectorProjection(double[][] positionData)
+    public static double[] vectorProjection(double[][] positionData, int degree)
     {
         double[] yVector =  new double[positionData.length];
-        double[][] matrix = createMatrix(positionData);
+        double[][] matrix = createMatrix(positionData, degree);
         double[][] transposedMatrix = transposeMatrix(matrix);
         for (int i = 0; i < positionData.length; i++)
         {
@@ -33,12 +33,12 @@ public class CurveFitHelper
         System.out.println(Arrays.toString(result));
         return (result);
     }
-    public static double[][] createMatrix(double[][] data)
+    public static double[][] createMatrix(double[][] data, int degree)
     {
-        double[][] matrix = new double[data.length][4];
+        double[][] matrix = new double[data.length][degree + 1];
         for(int i = 0; i < data.length; i++)
         {
-            for(int z = 0; z < 4; z++)
+            for(int z = 0; z < degree + 1; z++)
             {
                 matrix[i][z] = Math.pow(data[i][0], z);
             }
