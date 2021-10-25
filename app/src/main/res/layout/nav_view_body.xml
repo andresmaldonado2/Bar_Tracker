@@ -15,76 +15,29 @@
         android:clipChildren="false"
         android:clipToPadding="false">
 
-        <LinearLayout
+        <fragment
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="0.2"
-            android:orientation="horizontal">
+            android:name="com.example.main_menu.fragments.NavViewTrainingFragment"
+            android:id="@+id/trainingMenuButton">
+        </fragment>
 
-            <ImageView
-                android:id="@+id/imageView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingStart="14dp"
-                android:paddingTop="4dp"
-                app:srcCompat="@drawable/ic_dumbbell_white" />
-
-            <Button
-                android:id="@+id/button2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/navViewTraining"
-                android:textColor="@color/white"
-                app:backgroundTint="@color/backgroundGrey" />
-        </LinearLayout>
-
-        <LinearLayout
+        <fragment
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="0.2"
-            android:orientation="horizontal">
+            android:name="com.example.main_menu.fragments.NavViewPastWorkoutsFragment"
+            android:id="@+id/pastWorkoutsMenuButton">
+        </fragment>
 
-            <ImageView
-                android:id="@+id/imageView4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingStart="4dp"
-                android:paddingTop="4dp"
-                app:tint="@color/white"
-                app:srcCompat="@drawable/ic_baseline_insert_chart_outlined_24" />
-
-            <Button
-                android:id="@+id/button3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/navViewPastWorkouts"
-                android:textColor="@color/white"
-                app:backgroundTint="@color/backgroundGrey"/>
-        </LinearLayout>
-
-        <LinearLayout
+        <fragment
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:orientation="horizontal"
-            android:layout_weight="0.2">
-
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingStart="4dp"
-                android:paddingTop="4dp"
-                app:tint="@color/white"
-                app:srcCompat="@drawable/ic_baseline_settings_24" />
-
-            <Button
-                android:id="@+id/button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/navViewSettings"
-                android:textColor="@color/white"
-                app:backgroundTint="@color/backgroundGrey" />
-        </LinearLayout>
+            android:layout_weight="0.2"
+            android:name="com.example.main_menu.fragments.NavViewSettingsFragment"
+            android:id="@+id/settingsMenuButton">
+        </fragment>
 
         <!-- TODO round the corners out on this image, might make it look better-->
 

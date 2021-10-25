@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!-- TODO Put these strings into a resource rather than having them hard coded into here -->
+
+    <PreferenceCategory android:title="General">
+        <ListPreference
+            app:key="preferredWeightType"
+            app:title="Preferred weight type"
+            app:entries="@array/weightTypes"
+            app:entryValues="@array/weightTypeValues"
+            app:dialogTitle="Select one of the following:">
+        </ListPreference>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Notifications">
+        <Preference
+            app:key="updateNotification"
+            app:title="Send notification when new update is released">
+        </Preference>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Workout Data">
+        <Preference
+            app:key="timeFormat"
+            app:title="Set format of time saved with data"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Privacy">
+        <SwitchPreferenceCompat
+            app:key="diagnosticData"
+            app:title="Send diagnostic data"
+            app:summary="This data will never contain any identifying information, and will only be used for improving development"/>
+        <Preference
+            app:key="feedback"
+            app:title="Send feedback"
+            app:summary="Report technical issues or suggest new features"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>

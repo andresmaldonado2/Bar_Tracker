@@ -5,12 +5,14 @@
 
     <application
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:hardwareAccelerated="true">
+        android:name="com.example.main_menu.BarTrackerApplication"
+        android:largeHeap="true">
         <activity
             android:name=".MainMenuActivity"
             android:exported="true"
@@ -21,8 +23,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.TrainingBarPathActivity"
+        <activity
+            android:name=".ui.TrainingBarPathActivity"
             tools:ignore="LockedOrientationActivity">
+        </activity>
+        <activity android:name=".SettingsActivity">
+        </activity>
+        <activity android:name=".PastWorkoutsActivity">
         </activity>
     </application>
 

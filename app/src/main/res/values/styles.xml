@@ -8,6 +8,8 @@
         <item name="android:colorForeground">@color/buttonRed</item>
     </style>
     <style name="navViewMenuButtons" parent="Theme.MaterialComponents.DayNight.NoActionBar.Bridge">
-
+    </style>
+    <style name="PreferenceCategory" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:textColor">@color/buttonRed</item>
     </style>
 </resources>

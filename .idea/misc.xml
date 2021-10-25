@@ -13,8 +13,17 @@
         <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/layout/nav_bar_header.xml" value="0.67" />
         <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/layout/nav_header_main.xml" value="0.4925925925925926" />
         <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/layout/nav_view_body.xml" value="0.33" />
+        <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/layout/nav_view_body_past_workouts_fragment.xml" value="0.4925925925925926" />
+        <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/layout/nav_view_body_settings_fragment.xml" value="0.4925925925925926" />
+        <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/layout/nav_view_body_training_fragment.xml" value="0.4925925925925926" />
         <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/layout/nav_view_header.xml" value="0.67" />
+        <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/layout/setting_preference_button_layout.xml" value="0.4925925925925926" />
+        <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/layout/settings_activity.xml" value="0.4925925925925926" />
+        <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/layout/settings_main.xml" value="0.4925925925925926" />
+        <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/layout/settings_preference_fragment.xml" value="0.4925925925925926" />
         <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/layout/training_menu_body.xml" value="0.25416666666666665" />
+        <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/xml/root_preferences.xml" value="0.4925925925925926" />
+        <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/xml/settings_preference_fragment.xml" value="0.29074074074074074" />
       </map>
     </option>
   </component>
