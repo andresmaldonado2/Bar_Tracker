@@ -18,14 +18,67 @@ public class DataSimulationHelper
     private final static double STARTING_ECCENTRIC_TIME_INTERVAL = 1.2;
     private final static double CONCENTRIC_TIME_INTERVAL = 1.2;
 
-    public static double[][] createSimulationData(int numberOfExpectedReps)
+    private static double timeElapsed;
+    private static boolean concentricPath;
+    private static double timeInterval;
+    private static double totalTimeElapsed;
+    private static double initialTimeInterval;
+    private static int numberOfRepsPerformed;
+    private static int numberOfExpectedReps;
+
+    public DataSimulationHelper(int expectedReps)
+    {
+        timeElapsed = 0;
+        timeInterval = STARTING_ECCENTRIC_TIME_INTERVAL;
+        totalTimeElapsed = 0.0;
+        initialTimeInterval = 0.5;
+        rand = new Random();
+        numberOfRepsPerformed = 0;
+        concentricPath = true;
+        numberOfExpectedReps = expectedReps;
+    }
+
+    public double[] nextDataPoint()
     {
         ArrayList<ArrayList<Double>> simData = new ArrayList<ArrayList<Double>>();
-        double initialTimeInterval = 0.5;
-        rand = new Random();
-        double timeInterval = STARTING_ECCENTRIC_TIME_INTERVAL;
-        double totalTimeElapsed = 0.0;
-        int numberOfRepsPerformed = 0;
+        if(timeInterval < 4.0)
+        {
+            if(concentricPath)
+            {
+                double[] temp = new double[2];
+                temp[0] = totalTimeElapsed;
+                temp[1] = -1 * CALC_HEIGHT * Math.sin(((Math.PI / timeInterval) * timeElapsed) + (0.5 * Math.PI)) + CALC_HEIGHT;
+                totalTimeElapsed = totalTimeElapsed + initialTimeInterval;
+                timeElapsed = timeElapsed + initialTimeInterval;
+                if(timeElapsed > timeInterval)
+                {
+                    concentricPath = false;
+                    timeElapsed = 0;
+                }
+                return temp;
+            }
+            else
+            {
+                double[] temp = new double[2];
+                temp[0] = totalTimeElapsed;
+                temp[1] = CALC_HEIGHT * Math.sin(((Math.PI / CONCENTRIC_TIME_INTERVAL) * timeElapsed) + (0.5 * Math.PI)) + CALC_HEIGHT;
+                totalTimeElapsed = totalTimeElapsed + initialTimeInterval;
+                timeElapsed = timeElapsed + initialTimeInterval;
+                if(timeElapsed > CONCENTRIC_TIME_INTERVAL)
+                {
+                    concentricPath = true;
+                    timeElapsed = 0;
+                    numberOfRepsPerformed++;
+                    timeInterval = timeInterval + generateIntervalIncrease(numberOfRepsPerformed, numberOfExpectedReps);
+                }
+                return temp;
+            }
+        }
+        else
+        {
+            return null;
+        }
+        /*
         while(timeInterval < 4.0)
         {
             for (double timeElapsed = 0; timeElapsed <= timeInterval; timeElapsed = timeElapsed + initialTimeInterval)
@@ -48,15 +101,7 @@ public class DataSimulationHelper
             numberOfRepsPerformed++;
             timeInterval = timeInterval + generateIntervalIncrease(numberOfRepsPerformed, numberOfExpectedReps);
         }
-        double[][] simDataArray = new double[simData.size()][simData.get(0).size()];
-        for(int i = 0; i < simDataArray.length; i++)
-        {
-            for(int z = 0; z < simDataArray[0].length; z++)
-            {
-                simDataArray[i][z] = simData.get(i).get(z);
-            }
-        }
-        return simDataArray;
+         */
     }
     private static double generateIntervalIncrease(int numberOfRepsPerformed, int numberOfExpectedReps)
     {

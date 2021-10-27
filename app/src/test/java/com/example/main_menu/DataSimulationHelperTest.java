@@ -11,7 +11,7 @@ public class DataSimulationHelperTest
     @Test
     public void createSimulationDataTest()
     {
-        double[][] data = DataSimulationHelper.createSimulationData(1);
+        double[][] data = DataSimulationHelper.nextDataPoint(1);
         System.out.println(Arrays.deepToString(data));
     }
 }
