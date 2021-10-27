@@ -2,6 +2,7 @@ package com.example.main_menu.ui;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.AbsListView;
 import android.widget.RelativeLayout;
 
@@ -17,19 +18,24 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import java.util.ArrayList;
+import java.util.concurrent.Executor;
 
 public class TrainingBarPathActivity extends AppCompatActivity
 {
     RelativeLayout rl;
     LineChart chart;
-    LineDataSet graphDataSet;
+    // TODO Figure out how to do this with callbacks? This seems a little too hacked together to seem correct
+    volatile LineDataSet graphDataSet;
+    volatile DataSimulationHelper sim;
     LineData chartData;
+
     // Same color as the backgrounds in previous activities
     private final int BACKGROUND_COLOR = 0xFF121212;
     private final int LINE_COLOR = 0xFFB00020;
     private final int NUMBER_OF_EXPECTED_REPS = 5;
     private final float LINE_WIDTH = 5f;
 
+    private Handler handler = new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -41,7 +47,7 @@ public class TrainingBarPathActivity extends AppCompatActivity
         RelativeLayout.LayoutParams rlParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
         rl.setBackgroundColor(BACKGROUND_COLOR);
 
-        DataSimulationHelper sim = new DataSimulationHelper(NUMBER_OF_EXPECTED_REPS);
+        sim = new DataSimulationHelper(NUMBER_OF_EXPECTED_REPS);
         ArrayList<Entry> dataPoints = new ArrayList<>();
         double[] dataPointSim = sim.nextDataPoint();
         dataPoints.add(new Entry(((float)dataPointSim[0]), (float)dataPointSim[1]));
@@ -65,6 +71,7 @@ public class TrainingBarPathActivity extends AppCompatActivity
         while(dataPointSim != null)
         {
             graphDataSet.addEntry(new Entry(((float)dataPointSim[0]), (float)dataPointSim[1]));
+            graphDataSet.getEntryForIndex(graphDataSet.getEntryCount() - 1);
             chart.notifyDataSetChanged();
             chart.invalidate();
             dataPointSim = sim.nextDataPoint();
