@@ -2,13 +2,12 @@ package com.example.main_menu.ui;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.os.Handler;
 import android.widget.AbsListView;
 import android.widget.RelativeLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.main_menu.helpers.DataSimulationHelper;
+import com.example.main_menu.callbacks.LineChartWorker;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -18,24 +17,19 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import java.util.ArrayList;
-import java.util.concurrent.Executor;
 
 public class TrainingBarPathActivity extends AppCompatActivity
 {
-    RelativeLayout rl;
-    LineChart chart;
-    // TODO Figure out how to do this with callbacks? This seems a little too hacked together to seem correct
-    volatile LineDataSet graphDataSet;
-    volatile DataSimulationHelper sim;
-    LineData chartData;
+    private RelativeLayout rl;
+    private LineChart chart;
+    private LineDataSet graphDataSet;
+    private LineData chartData;
 
     // Same color as the backgrounds in previous activities
     private final int BACKGROUND_COLOR = 0xFF121212;
     private final int LINE_COLOR = 0xFFB00020;
-    private final int NUMBER_OF_EXPECTED_REPS = 5;
     private final float LINE_WIDTH = 5f;
 
-    private Handler handler = new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -47,15 +41,11 @@ public class TrainingBarPathActivity extends AppCompatActivity
         RelativeLayout.LayoutParams rlParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
         rl.setBackgroundColor(BACKGROUND_COLOR);
 
-        sim = new DataSimulationHelper(NUMBER_OF_EXPECTED_REPS);
         ArrayList<Entry> dataPoints = new ArrayList<>();
-        double[] dataPointSim = sim.nextDataPoint();
-        dataPoints.add(new Entry(((float)dataPointSim[0]), (float)dataPointSim[1]));
-
         graphDataSet = new LineDataSet(dataPoints, "Test Data");
         setLineDataSetDesign(graphDataSet);
 
-        ArrayList<ILineDataSet> chartDataSet = new ArrayList<ILineDataSet>();
+        ArrayList<ILineDataSet> chartDataSet = new ArrayList<>();
         chartDataSet.add(graphDataSet);
         chartData = new LineData(chartDataSet);
         chart.setData(chartData);
@@ -68,14 +58,13 @@ public class TrainingBarPathActivity extends AppCompatActivity
         this.addContentView(rl, rlParams);
 
         // TODO Need to make this its own thread with a .postDelayed() to get a time interval
-        while(dataPointSim != null)
-        {
-            graphDataSet.addEntry(new Entry(((float)dataPointSim[0]), (float)dataPointSim[1]));
-            graphDataSet.getEntryForIndex(graphDataSet.getEntryCount() - 1);
+        LineChartWorker chartUpdateListener = new LineChartWorker(graphDataSet);
+        chartUpdateListener.setRealTimeDataListener(data -> {
+            graphDataSet = data;
             chart.notifyDataSetChanged();
             chart.invalidate();
-            dataPointSim = sim.nextDataPoint();
-        }
+        });
+        chartUpdateListener.startChartUpdates();
     }
     private void setAxisDesign(LineChart chart)
     {
