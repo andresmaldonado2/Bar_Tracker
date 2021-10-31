@@ -2,12 +2,14 @@ package com.example.main_menu.ui;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.AbsListView;
 import android.widget.RelativeLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.main_menu.callbacks.LineChartWorker;
+import com.example.main_menu.helpers.CurveFitHelper;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -43,24 +45,25 @@ public class TrainingBarPathActivity extends AppCompatActivity
 
         ArrayList<Entry> dataPoints = new ArrayList<>();
         graphDataSet = new LineDataSet(dataPoints, "Test Data");
+        // Might not be able to create an empty graph, have to preload it with something?
+        graphDataSet.addEntry(new Entry(0, 0));
         setLineDataSetDesign(graphDataSet);
 
-        ArrayList<ILineDataSet> chartDataSet = new ArrayList<>();
-        chartDataSet.add(graphDataSet);
-        chartData = new LineData(chartDataSet);
+        chartData = new LineData(graphDataSet);
         chart.setData(chartData);
         setChartDesign(chart);
         chart.invalidate();
+        CurveFitHelper ch = new CurveFitHelper();
         //RelativeLayout.LayoutParams chartParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
 
         // TODO Research why the hell the layouts used in documentation to display graph don't work but specifically an absolute layout does???
         rl.addView(chart, new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, AbsListView.LayoutParams.MATCH_PARENT));
         this.addContentView(rl, rlParams);
 
-        // TODO Need to make this its own thread with a .postDelayed() to get a time interval
-        LineChartWorker chartUpdateListener = new LineChartWorker(graphDataSet);
+        LineChartWorker chartUpdateListener = new LineChartWorker(chartData);
         chartUpdateListener.setRealTimeDataListener(data -> {
-            graphDataSet = data;
+            chartData = data;
+            // TODO figure this out later chart.moveViewToX(chartData.getEntryCount()/2 - 1);
             chart.notifyDataSetChanged();
             chart.invalidate();
         });
@@ -85,6 +88,7 @@ public class TrainingBarPathActivity extends AppCompatActivity
     private void setChartDesign(LineChart chart)
     {
         chart.setGridBackgroundColor(0xFFFFFFFF);
+        //chart.setVisibleXRange(0, 15);
         setAxisDesign(chart);
     }
 }

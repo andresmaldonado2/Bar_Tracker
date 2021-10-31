@@ -1,7 +1,8 @@
 package com.example.main_menu.helpers;
 
 
-import java.util.ArrayList;
+import android.util.Log;
+
 import java.util.Random;
 
 // We're gonna say most reps go from about 1 second to 3+ seconds
@@ -15,8 +16,8 @@ public class DataSimulationHelper
     private final static double HEIGHT_OF_BAR_PATH = 12;
     // Because of sin wave used in simulation, the number used in the formula is doubled
     private final static double CALC_HEIGHT = HEIGHT_OF_BAR_PATH / 2;
-    private final static double STARTING_ECCENTRIC_TIME_INTERVAL = 1.2;
-    private final static double CONCENTRIC_TIME_INTERVAL = 1.2;
+    private final static double STARTING_CONCENTRIC_TIME_INTERVAL = 1.2;
+    private final static double ECCENTRIC_TIME_INTERVAL = 1.2;
 
     private static double timeElapsed;
     private static boolean concentricPath;
@@ -29,20 +30,21 @@ public class DataSimulationHelper
     public DataSimulationHelper(int expectedReps)
     {
         timeElapsed = 0;
-        timeInterval = STARTING_ECCENTRIC_TIME_INTERVAL;
+        timeInterval = STARTING_CONCENTRIC_TIME_INTERVAL;
         totalTimeElapsed = 0.0;
-        initialTimeInterval = 0.5;
+        initialTimeInterval = 0.016;
         rand = new Random();
         numberOfRepsPerformed = 0;
         concentricPath = true;
         numberOfExpectedReps = expectedReps;
+        Log.d("DATASIM", "Sim objected created");
     }
 
     public double[] nextDataPoint()
     {
-        ArrayList<ArrayList<Double>> simData = new ArrayList<ArrayList<Double>>();
-        if(timeInterval < 4.0)
+        if(timeInterval < 4.0 && numberOfRepsPerformed < numberOfExpectedReps)
         {
+            Log.d("DATASIM", "Number of reps: " + Integer.toString(numberOfRepsPerformed));
             if(concentricPath)
             {
                 double[] temp = new double[2];
@@ -61,10 +63,10 @@ public class DataSimulationHelper
             {
                 double[] temp = new double[2];
                 temp[0] = totalTimeElapsed;
-                temp[1] = CALC_HEIGHT * Math.sin(((Math.PI / CONCENTRIC_TIME_INTERVAL) * timeElapsed) + (0.5 * Math.PI)) + CALC_HEIGHT;
+                temp[1] = CALC_HEIGHT * Math.sin(((Math.PI / ECCENTRIC_TIME_INTERVAL) * timeElapsed) + (0.5 * Math.PI)) + CALC_HEIGHT;
                 totalTimeElapsed = totalTimeElapsed + initialTimeInterval;
                 timeElapsed = timeElapsed + initialTimeInterval;
-                if(timeElapsed > CONCENTRIC_TIME_INTERVAL)
+                if(timeElapsed > ECCENTRIC_TIME_INTERVAL)
                 {
                     concentricPath = true;
                     timeElapsed = 0;

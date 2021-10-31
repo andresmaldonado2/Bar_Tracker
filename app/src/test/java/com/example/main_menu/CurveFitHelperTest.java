@@ -4,10 +4,10 @@ import com.example.main_menu.helpers.CurveFitHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import java.util.Arrays;
-import java.util.concurrent.Executor;
 
 public class CurveFitHelperTest
 {
+    CurveFitHelper curveHelper = new CurveFitHelper();
     @Test
     public void testMultiplyMatrices()
     {
@@ -25,7 +25,7 @@ public class CurveFitHelperTest
                 {-2,8},
                 {2,-4}
         };
-        double[][] actualMatrixResult = CurveFitHelper.multiplyMatrices(testMatrixA, testMatrixB);
+        double[][] actualMatrixResult = curveHelper.multiplyMatrices(testMatrixA, testMatrixB);
         double epsilon = 0.000001d;
         for(int i = 0; i < expectedMatrixResult.length; i++)
         {
@@ -45,7 +45,7 @@ public class CurveFitHelperTest
         };
         double[] testMatrixB = new double[]{8,6,3};
         double[] expectedMatrixResult = new double[]{67, 95, 103};
-        double[] actualMatrixResult = CurveFitHelper.multiplyMatrices(testMatrixA, testMatrixB);
+        double[] actualMatrixResult = curveHelper.multiplyMatrices(testMatrixA, testMatrixB);
         double epsilon = 0.000001d;
         for(int i = 0; i < expectedMatrixResult.length; i++)
         {
@@ -69,7 +69,7 @@ public class CurveFitHelperTest
                 {3,14}
         };
         double[] expectedResults = new double[]{0.5714, 1, 1.1071};
-        double[] actualResults = CurveFitHelper.vectorProjection(testData,2);
+        double[] actualResults = curveHelper.vectorProjection(testData,2);
         double epsilon = 0.0001d;
         for (int i = 0; i < expectedResults.length; i++)
         {
@@ -88,7 +88,7 @@ public class CurveFitHelperTest
             {5,4}
         };
         double[] expectedResults = new double[]{0.9973, -5.0755, 3.0678, -0.3868};
-        double[] actualResults = CurveFitHelper.vectorProjection(testData,3);
+        double[] actualResults = curveHelper.vectorProjection(testData,3);
         double epsilon = 0.01d;
         for (int i = 0; i < expectedResults.length; i++)
         {
@@ -111,7 +111,7 @@ public class CurveFitHelperTest
                 {0,4,9,16,25},
                 {0,8,27,64,125}
         };
-        double[][] actualMatrixResult = CurveFitHelper.transposeMatrix(testData);
+        double[][] actualMatrixResult = curveHelper.transposeMatrix(testData);
         double epsilon = 0.000001d;
         for(int i = 0; i < expectedMatrixResult.length; i++)
         {
@@ -131,7 +131,7 @@ public class CurveFitHelperTest
                 {224,978,4424,20514}
         };
         double expectedResult = 106848.0;
-        double actualResult = CurveFitHelper.determinantMatrix(testData);
+        double actualResult = curveHelper.determinantMatrix(testData);
         double epsilon = 0.000001d;
         assertEquals(expectedResult, actualResult, epsilon);
     }
@@ -150,7 +150,7 @@ public class CurveFitHelperTest
                 {0.2844, -2.7877, 1.4987, -0.1934},
                 {-0.0267, 0.3488, -0.1934, 0.0254}
         };
-        double[][] actualMatrixResult = CurveFitHelper.inverseMatrix(testData);
+        double[][] actualMatrixResult = curveHelper.inverseMatrix(testData);
         double epsilon = 0.0001d;
         for(int i = 0; i < expectedMatrixResult.length; i++)
         {
@@ -175,7 +175,7 @@ public class CurveFitHelperTest
                 {-60,-82,-2,20},
                 {-36,-58,-10,12}
         };
-        double[][] actualMatrixResult = CurveFitHelper.cofactorMatrix(testData);
+        double[][] actualMatrixResult = curveHelper.cofactorMatrix(testData);
         double epsilon = 0.0001d;
         for(int i = 0; i < expectedMatrixResult.length; i++)
         {
@@ -200,7 +200,7 @@ public class CurveFitHelperTest
                 {4,4,-2,-10},
                 {4,4,20,12}
         };
-        double[][] actualMatrixResult = CurveFitHelper.adjointMatrix(testData);
+        double[][] actualMatrixResult = curveHelper.adjointMatrix(testData);
         double epsilon = 0.0001d;
         for(int i = 0; i < expectedMatrixResult.length; i++)
         {
@@ -227,7 +227,7 @@ public class CurveFitHelperTest
                 {4,5},
                 {5,4}
         };
-        double[][] actualMatrixResult = CurveFitHelper.dataPointsOnCurve(testData, 3);
+        double[][] actualMatrixResult = curveHelper.dataPointsOnCurve(testData, 3);
         double epsilon = 0.1d;
         System.out.println(Arrays.deepToString(actualMatrixResult));
         for(int i = 0; i < expectedMatrixResult.length; i++)

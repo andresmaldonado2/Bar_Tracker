@@ -1,8 +1,8 @@
 package com.example.main_menu.interfaces;
 
-import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.data.LineData;
 
 public interface RealTimeDataListener
 {
-    void onLineDataSetUpdate(LineDataSet data);
+    void onLineDataSetUpdate(LineData data);
 }
