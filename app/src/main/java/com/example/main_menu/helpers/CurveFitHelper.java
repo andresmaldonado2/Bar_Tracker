@@ -7,9 +7,12 @@ package com.example.main_menu.helpers;
 import androidx.annotation.VisibleForTesting;
 
 import com.example.main_menu.callbacks.MatrixMultiplicationResultWorker;
+import com.example.main_menu.callbacks.MatrixMultiplicationThreadWorker;
 import com.example.main_menu.interfaces.MatrixMultiplicationResultListener;
+import com.example.main_menu.interfaces.MatrixMultiplicationThreadListener;
 
 import java.util.Arrays;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -31,6 +34,20 @@ public class CurveFitHelper
         }
         return calculatedPoints;
     }
+    public double[] unthreadedVectorProjection(double[][] positionData, int degree)
+    {
+        double[] yVector =  new double[positionData.length];
+        double[][] matrix = unthreadedCreateMatrix(positionData, degree);
+        double[][] transposedMatrix = transposeMatrix(matrix);
+        for (int i = 0; i < positionData.length; i++)
+        {
+            yVector[i] = positionData[i][1];
+        }
+        // Equation for this is ((X^t*X)^-1)*X^t*y
+        double[] result = multiplyMatrices(unthreadedMultiplyMatrix(unthreadedInverseMatrix(unthreadedMultiplyMatrix(transposedMatrix, matrix)), transposedMatrix), yVector);
+        System.out.println(Arrays.toString(result));
+        return (result);
+    }
     public double[] vectorProjection(double[][] positionData, int degree)
     {
         double[] yVector =  new double[positionData.length];
@@ -45,8 +62,7 @@ public class CurveFitHelper
         System.out.println(Arrays.toString(result));
         return (result);
     }
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    public double[][] createMatrix(double[][] data, int degree)
+    public double[][] unthreadedCreateMatrix(double[][] data, int degree)
     {
         double[][] matrix = new double[data.length][degree + 1];
         for(int i = 0; i < data.length; i++)
@@ -58,6 +74,38 @@ public class CurveFitHelper
         }
         return matrix;
     }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    public double[][] createMatrix(double[][] data, int degree)
+    {
+        double[][] matrix = new double[data.length][degree + 1];
+        CountDownLatch latch = new CountDownLatch(data.length * degree);
+        for(int i = 0; i < data.length; i++)
+        {
+            for(int z = 0; z < degree + 1; z++)
+            {
+                int finalI = i;
+                int finalZ = z;
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        matrix[finalI][finalZ] = Math.pow(data[finalI][0], finalZ);
+                        latch.countDown();
+                    }
+                });
+            }
+        }
+        try {
+            latch.await();
+        }
+        catch (InterruptedException e)
+        {
+
+        }
+        System.out.println("Created matrix: " + Arrays.deepToString(matrix));
+        return matrix;
+    }
+
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     public double[][] transposeMatrix(double[][] data)
     {
@@ -75,17 +123,25 @@ public class CurveFitHelper
     public double[][] multiplyMatrices(double[][] aMatrix, double[][] bMatrix)
     {
         final double[][] productMatrix = new double[aMatrix.length][bMatrix[0].length];
+        CountDownLatch threadLatch = new CountDownLatch(productMatrix[0].length * aMatrix.length);
+
+        MatrixMultiplicationThreadWorker threadWorker = new MatrixMultiplicationThreadWorker(productMatrix[0].length * aMatrix.length * aMatrix[0].length);
+        threadWorker.setMatrixMultiplicationThreadListener(new MatrixMultiplicationThreadListener() {
+            @Override
+            public void allThreadsDone() {
+
+            }
+        });
         for (int i = 0; i < productMatrix[0].length; i++)
         {
             for (int z = 0; z < aMatrix.length; z++)
             {
-                /*
                 // This seems like such a hack but at least according to stackoverflow this is how you deal
                 // With this issue
                 // TODO please for the love of god figure out the proper way to do this
                 int finalI = i;
                 int finalZ = z;
-                MatrixMultiplicationResultWorker resultWorker = new MatrixMultiplicationResultWorker(aMatrix[0].length, executor);
+                MatrixMultiplicationResultWorker resultWorker = new MatrixMultiplicationResultWorker(aMatrix[0].length, executor, threadLatch);
                 resultWorker.setResultListener(new MatrixMultiplicationResultListener() {
                     @Override
                     public void onResultComplete(double result) {
@@ -96,29 +152,30 @@ public class CurveFitHelper
                 {
                     resultWorker.addMultiplicationWorker(aMatrix[z][a], bMatrix[a][i], executor);
                 }
+            }
+        }
+        try {
+            threadLatch.await();
+        }
+        catch (InterruptedException e)
+        {
 
-                 */
-                int finalI = i;
-                int finalZ = z;
-                executor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        double result = 0.0;
-                        for (int a = 0; a < aMatrix[0].length; a++)
-                        {
-                            result = result + (aMatrix[finalZ][a] * bMatrix[a][finalI]);
-                        }
-                        productMatrix[finalZ][finalI] = result;
-                    }
-                });
-                /*
+        }
+        return productMatrix;
+    }
+    public double[][] unthreadedMultiplyMatrix(double[][] aMatrix, double[][] bMatrix)
+    {
+        double[][] productMatrix = new double[aMatrix.length][bMatrix[0].length];
+        for (int i = 0; i < productMatrix[0].length; i++)
+        {
+            for (int z = 0; z < aMatrix.length; z++)
+            {
                 double result = 0.0;
                 for (int a = 0; a < aMatrix[0].length; a++)
                 {
                     result = result + (aMatrix[z][a] * bMatrix[a][i]);
                 }
                 productMatrix[z][i] = result;
-                 */
             }
         }
         return productMatrix;
@@ -139,7 +196,7 @@ public class CurveFitHelper
         return productMatrix;
     }
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    public double[][] inverseMatrix(double[][] data)
+    public double[][] unthreadedInverseMatrix(double[][] data)
     {
         double[][] inversedMatrix = new double[data.length][data[0].length];
         double determinant = determinantMatrix(data);
@@ -154,12 +211,101 @@ public class CurveFitHelper
         return inversedMatrix;
     }
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    public double[][] inverseMatrix(double[][] data)
+    {
+        double[][] inversedMatrix = new double[data.length][data[0].length];
+        double determinant = determinantMatrix(data);
+        double[][] adjointMatrix = adjointMatrix(data);
+        CountDownLatch latch = new CountDownLatch(data.length * data[0].length);
+        for (int i = 0; i < data.length; i++)
+        {
+            for(int z = 0; z < data[0].length; z++)
+            {
+                int finalI = i;
+                int finalZ = z;
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        inversedMatrix[finalI][finalZ] = adjointMatrix[finalI][finalZ] / determinant;
+                        latch.countDown();
+                    }
+                });
+            }
+        }
+        try
+        {
+            latch.await();
+        }
+        catch (InterruptedException e)
+        {
+
+        }
+        return inversedMatrix;
+    }
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     public double[][] adjointMatrix(double[][] data)
     {
         return transposeMatrix(cofactorMatrix(data));
     }
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     public double[][] cofactorMatrix(double[][] data)
+    {
+        double[][] cofactoredMatrix = new double[data.length][data[0].length];
+        CountDownLatch latch = new CountDownLatch(data.length * data[0].length);
+        for (int i = 0; i < data.length; i++)
+        {
+            for (int z = 0; z < data[0].length; z++)
+            {
+                int finalI = i;
+                int finalZ = z;
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        double[][] tempMatrix = new double[data.length - 1][data[0].length - 1];
+                        for(int x = 0; x < data.length; x++)
+                        {
+                            for(int y = 0; y < data[0].length; y++)
+                            {
+                                if(x < finalI)
+                                {
+                                    if(y < finalZ)
+                                    {
+                                        tempMatrix[x][y] = data[x][y];
+                                    }
+                                    else if(y > finalZ)
+                                    {
+                                        tempMatrix[x][y - 1] = data[x][y];
+                                    }
+                                }
+                                else if (x > finalI)
+                                {
+                                    if(y < finalZ)
+                                    {
+                                        tempMatrix[x - 1][y] = data[x][y];
+                                    }
+                                    else if(y > finalZ)
+                                    {
+                                        tempMatrix[x - 1][y - 1] = data[x][y];
+                                    }
+                                }
+                            }
+                        }
+                        cofactoredMatrix[finalI][finalZ] = (Math.pow((-1),((finalI + 1) + (finalZ + 1)))) * determinantMatrix(tempMatrix);
+                        latch.countDown();
+                    }
+                });
+            }
+        }
+        try {
+            latch.await();
+        }
+        catch (InterruptedException e)
+        {
+
+        }
+        return cofactoredMatrix;
+    }
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    public double[][] unthreadedCofactorMatrix(double[][] data)
     {
        double[][] cofactoredMatrix = new double[data.length][data[0].length];
         for (int i = 0; i < data.length; i++)
@@ -200,6 +346,7 @@ public class CurveFitHelper
         }
         return cofactoredMatrix;
     }
+
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     public double determinantMatrix(double[][] data)
     {

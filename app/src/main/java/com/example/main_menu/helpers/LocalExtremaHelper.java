@@ -47,7 +47,6 @@ public class LocalExtremaHelper
             slopes[i] += derivativeCoefficients[0];
             for(int z = 1; z < derivativeCoefficients.length; z++)
             {
-                // Ignore warning here IDK why it doesn't go away even despite the exception throw if it doesn't get initialized
                 slopes[i] += testPoints[i] * derivativeCoefficients[z];
             }
             //TODO I think I don't need any of this if statement nonsense, it'll probably catch some error but then I'd rather it crash so I can know and fix it tbh

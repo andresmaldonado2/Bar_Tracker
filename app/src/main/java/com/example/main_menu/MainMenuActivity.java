@@ -3,13 +3,10 @@ package com.example.main_menu;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentActivity;
 
 import com.example.main_menu.databinding.ActivityMainBinding;
-import com.example.main_menu.ui.TrainingBarPathActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainMenuActivity extends AppCompatActivity

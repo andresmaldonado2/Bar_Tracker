@@ -1,6 +1,8 @@
 package com.example.main_menu;
 
 import com.example.main_menu.helpers.CurveFitHelper;
+import com.example.main_menu.helpers.DataSimulationHelper;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 import java.util.Arrays;
@@ -8,6 +10,72 @@ import java.util.Arrays;
 public class CurveFitHelperTest
 {
     CurveFitHelper curveHelper = new CurveFitHelper();
+    @Test
+    public void testThreadedCreateMatrix()
+    {
+
+    }
+    @Test
+    public void testThreadedCofactorMatrix()
+    {
+        double[][] testData = new double[][]{
+                {5,-2,2,7},
+                {1,0,0,3},
+                {-3,1,5,0},
+                {3,-1,-9,4}
+        };
+        double[][] expectedMatrixResult = new double[][]{
+                {-12,-56,4,4},
+                {76,208,4,4},
+                {-60,-82,-2,20},
+                {-36,-58,-10,12}
+        };
+        double[][] actualMatrixResult = curveHelper.cofactorMatrix(testData);
+        double epsilon = 0.0001d;
+        for(int i = 0; i < expectedMatrixResult.length; i++)
+        {
+            for (int z = 0; z < expectedMatrixResult[0].length; z++)
+            {
+                assertEquals(expectedMatrixResult[i][z], actualMatrixResult[i][z], epsilon);
+            }
+        }
+    }
+    @Test
+    public void testQuasiMaxStrainQuadraticRegression()
+    {
+        DataSimulationHelper sim = new DataSimulationHelper(1);
+        // Calculated this by taking the standard initial concentric of 1.2 seconds
+        // divided by the standard initial time interval
+        double[][] testData = new double[75][2];
+        int count = 0;
+        testData[count] = sim.nextDataPoint();
+        while (sim.getConcentricPath())
+        {
+            count++;
+            System.out.println("Count: " + count);
+            testData[count] = sim.nextDataPoint();
+        }
+        double[] coefficientResults = curveHelper.vectorProjection(testData, 2);
+        assertEquals(0,0);
+    }
+    @Test
+    public void testUnthreadedMultiplyMatrix()
+    {
+        DataSimulationHelper sim = new DataSimulationHelper(1);
+        // Calculated this by taking the standard initial concentric of 1.2 seconds
+        // divided by the standard initial time interval
+        double[][] testData = new double[75][2];
+        int count = 0;
+        testData[count] = sim.nextDataPoint();
+        while (sim.getConcentricPath())
+        {
+            count++;
+            System.out.println("Count: " + count);
+            testData[count] = sim.nextDataPoint();
+        }
+        double[] coefficientResults = curveHelper.unthreadedVectorProjection(testData, 2);
+        assertEquals(0,0);
+    }
     @Test
     public void testMultiplyMatrices()
     {
@@ -27,6 +95,7 @@ public class CurveFitHelperTest
         };
         double[][] actualMatrixResult = curveHelper.multiplyMatrices(testMatrixA, testMatrixB);
         double epsilon = 0.000001d;
+        System.out.println(Arrays.deepToString(actualMatrixResult));
         for(int i = 0; i < expectedMatrixResult.length; i++)
         {
             for (int z = 0; z < expectedMatrixResult[0].length; z++)

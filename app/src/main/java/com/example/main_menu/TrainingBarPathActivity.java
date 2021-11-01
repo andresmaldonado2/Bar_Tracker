@@ -1,8 +1,7 @@
-package com.example.main_menu.ui;
+package com.example.main_menu;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.AbsListView;
 import android.widget.RelativeLayout;
 
@@ -16,7 +15,6 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import java.util.ArrayList;
 
@@ -45,7 +43,8 @@ public class TrainingBarPathActivity extends AppCompatActivity
 
         ArrayList<Entry> dataPoints = new ArrayList<>();
         graphDataSet = new LineDataSet(dataPoints, "Test Data");
-        // Might not be able to create an empty graph, have to preload it with something?
+        // Need to preload graph with something, else negative array size errors get thrown
+        // Something weird in the way the library was implemented, not noted in documentation either :shrug:
         graphDataSet.addEntry(new Entry(0, 0));
         setLineDataSetDesign(graphDataSet);
 
@@ -77,6 +76,9 @@ public class TrainingBarPathActivity extends AppCompatActivity
         rightAxis.setEnabled(false);
         yAxis.setTextColor(0xFFFFFFFF);
         xAxis.setTextColor(0xFFFFFFFF);
+        yAxis.setDrawGridLines(false);
+        xAxis.setDrawGridLines(false);
+
     }
     private void setLineDataSetDesign(LineDataSet lineDataSet)
     {

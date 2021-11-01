@@ -1,8 +1,6 @@
 package com.example.main_menu.helpers;
 
-
-import android.util.Log;
-
+import androidx.annotation.VisibleForTesting;
 import java.util.Random;
 
 // We're gonna say most reps go from about 1 second to 3+ seconds
@@ -10,8 +8,6 @@ import java.util.Random;
 // TODO Find actual published journal source for this, I know its true I just gotta find it in the literature
 public class DataSimulationHelper
 {
-    // This is roughly .26 seconds, or a little over a quarter of a second
-    // Keeping it in PI makes things 1000% easier, trust me, just keep it in terms of PI
     private static Random rand;
     private final static double HEIGHT_OF_BAR_PATH = 12;
     // Because of sin wave used in simulation, the number used in the formula is doubled
@@ -37,14 +33,12 @@ public class DataSimulationHelper
         numberOfRepsPerformed = 0;
         concentricPath = true;
         numberOfExpectedReps = expectedReps;
-        Log.d("DATASIM", "Sim objected created");
     }
 
     public double[] nextDataPoint()
     {
         if(timeInterval < 4.0 && numberOfRepsPerformed < numberOfExpectedReps)
         {
-            Log.d("DATASIM", "Number of reps: " + Integer.toString(numberOfRepsPerformed));
             if(concentricPath)
             {
                 double[] temp = new double[2];
@@ -80,30 +74,6 @@ public class DataSimulationHelper
         {
             return null;
         }
-        /*
-        while(timeInterval < 4.0)
-        {
-            for (double timeElapsed = 0; timeElapsed <= timeInterval; timeElapsed = timeElapsed + initialTimeInterval)
-            {
-                ArrayList<Double> temp = new ArrayList<>();
-                temp.add(totalTimeElapsed);
-                temp.add(-1 * CALC_HEIGHT * Math.sin(((Math.PI / timeInterval) * timeElapsed) + (0.5 * Math.PI)) + CALC_HEIGHT);
-                simData.add(temp);
-                //TODO May need to change it so a data point is added at the very top of the sine wave, not sure yet
-                totalTimeElapsed = totalTimeElapsed + initialTimeInterval;
-            }
-            for(double timeElapsed = 0; timeElapsed <= CONCENTRIC_TIME_INTERVAL; timeElapsed = timeElapsed + initialTimeInterval)
-            {
-                ArrayList<Double> temp = new ArrayList<>();
-                temp.add(totalTimeElapsed);
-                temp.add(CALC_HEIGHT * Math.sin(((Math.PI / CONCENTRIC_TIME_INTERVAL) * timeElapsed) + (0.5 * Math.PI)) + CALC_HEIGHT);
-                simData.add(temp);
-                totalTimeElapsed = totalTimeElapsed + initialTimeInterval;
-            }
-            numberOfRepsPerformed++;
-            timeInterval = timeInterval + generateIntervalIncrease(numberOfRepsPerformed, numberOfExpectedReps);
-        }
-         */
     }
     private static double generateIntervalIncrease(int numberOfRepsPerformed, int numberOfExpectedReps)
     {
@@ -118,5 +88,10 @@ public class DataSimulationHelper
         {
             return 0.0;
         }
+    }
+    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+    public boolean getConcentricPath()
+    {
+        return concentricPath;
     }
 }

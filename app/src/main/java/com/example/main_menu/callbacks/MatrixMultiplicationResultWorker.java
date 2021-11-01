@@ -2,20 +2,25 @@ package com.example.main_menu.callbacks;
 
 import com.example.main_menu.interfaces.MatrixMultiplicationListener;
 import com.example.main_menu.interfaces.MatrixMultiplicationResultListener;
+import com.example.main_menu.interfaces.MatrixMultiplicationThreadListener;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MatrixMultiplicationResultWorker
 {
     private ExecutorService executor;
     private MatrixMultiplicationResultListener resultListener;
-    double finalResult = 0;
-    int count;
+    private CountDownLatch latch;
+    Double finalResult = 0.0;
+    AtomicInteger count;
     int numOfWorkers;
-    public MatrixMultiplicationResultWorker(int numOfWorkers, ExecutorService executor)
+    public MatrixMultiplicationResultWorker(int numOfWorkers, ExecutorService executor, CountDownLatch latch)
     {
+        this.latch = latch;
         this.executor = executor;
-        count = 0;
+        count = new AtomicInteger(0);
         this.numOfWorkers = numOfWorkers;
     }
     public void addMultiplicationWorker(double aMatrixResult, double bMatrixResult, ExecutorService executor)
@@ -23,10 +28,13 @@ public class MatrixMultiplicationResultWorker
         MatrixMultiplicationWorker multiWorker = new MatrixMultiplicationWorker(aMatrixResult, bMatrixResult, executor);
         multiWorker.setMatrixMultiplicationListener(new MatrixMultiplicationListener() {
             @Override
-            public void onMultiplicationComplete(double result) {
-                finalResult = finalResult + result;
-                count++;
-                addAllResults();
+            public void onMultiplicationComplete(double result)
+            {
+                synchronized(finalResult)
+                {
+                    finalResult = finalResult + result;
+                    addAllResults();
+                }
             }
         });
         multiWorker.multiply();
@@ -37,9 +45,10 @@ public class MatrixMultiplicationResultWorker
     }
     public void addAllResults()
     {
-        if(count == numOfWorkers)
+        if(count.incrementAndGet() == numOfWorkers)
         {
-            resultListener.onResultComplete(finalResult);
+            resultListener.onResultComplete(finalResult.doubleValue());
+            latch.countDown();
         }
     }
 }

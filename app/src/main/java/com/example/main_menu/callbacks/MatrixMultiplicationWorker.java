@@ -14,7 +14,6 @@ public class MatrixMultiplicationWorker
     private Runnable r = new Runnable() {
         @Override
         public void run() {
-
             finalResult = aMatrixResult * bMatrixResult;
             listener.onMultiplicationComplete(finalResult);
         }
