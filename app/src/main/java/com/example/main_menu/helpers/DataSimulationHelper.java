@@ -8,23 +8,23 @@ import java.util.Random;
 // TODO Find actual published journal source for this, I know its true I just gotta find it in the literature
 public class DataSimulationHelper
 {
-    private static Random rand;
+    private Random rand;
     private final static double HEIGHT_OF_BAR_PATH = 12;
     // for the sake of demonstration however, we'll say this individual can survive a real grinder of a rep
     // That way its more obvious the time is increasing
     private final double MAXIMUM_LIFT_TIME = 4.5;
     // Because of sin wave used in simulation, the number used in the formula is doubled
-    private final static double CALC_HEIGHT = HEIGHT_OF_BAR_PATH / 2;
-    private final static double STARTING_CONCENTRIC_TIME_INTERVAL = 1.2;
-    private final static double ECCENTRIC_TIME_INTERVAL = 1.2;
+    private final double CALC_HEIGHT = HEIGHT_OF_BAR_PATH / 2;
+    private final double STARTING_CONCENTRIC_TIME_INTERVAL = 1.2;
+    private final double ECCENTRIC_TIME_INTERVAL = 1.2;
 
-    private static double timeElapsed;
-    private static boolean concentricPath;
-    private static double timeInterval;
-    private static double totalTimeElapsed;
-    private static double initialTimeInterval;
-    private static int numberOfRepsPerformed;
-    private static int numberOfExpectedReps;
+    private double timeElapsed;
+    private boolean concentricPath;
+    private double timeInterval;
+    private double totalTimeElapsed;
+    private double initialTimeInterval;
+    private int numberOfRepsPerformed;
+    private int numberOfExpectedReps;
 
     public DataSimulationHelper(int expectedReps)
     {
@@ -78,7 +78,7 @@ public class DataSimulationHelper
             return null;
         }
     }
-    private static double generateIntervalIncrease(int numberOfRepsPerformed, int numberOfExpectedReps)
+    private double generateIntervalIncrease(int numberOfRepsPerformed, int numberOfExpectedReps)
     {
         double intervalChange = rand.nextDouble();
         // Equation works out so that when #ofRepsPerformed == #ofExpectedReps a increase in time is guaranteed

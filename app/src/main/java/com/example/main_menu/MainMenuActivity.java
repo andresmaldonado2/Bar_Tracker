@@ -2,10 +2,13 @@ package com.example.main_menu;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.Navigation;
 
@@ -36,9 +39,8 @@ public class MainMenuActivity extends AppCompatActivity
         navBarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NavigationView nav = findViewById(R.id.navViewBody);
-                DrawerLayout.LayoutParams
-                nav;
+                DrawerLayout drawer = findViewById(R.id.root);
+                drawer.openDrawer(GravityCompat.START);
             }
         });
     }

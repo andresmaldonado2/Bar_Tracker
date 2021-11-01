@@ -2,8 +2,11 @@ package com.example.main_menu;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,7 +27,8 @@ public class TrainingBarPathActivity extends AppCompatActivity
     private LineChart chart;
     private LineDataSet graphDataSet;
     private LineData chartData;
-
+    private CountDownTimer cdt;
+    private TextView countdownText;
     // Same color as the backgrounds in previous activities
     private final int BACKGROUND_COLOR = 0xFF121212;
     private final int LINE_COLOR = 0xFFB00020;
@@ -52,10 +56,11 @@ public class TrainingBarPathActivity extends AppCompatActivity
         chart.setData(chartData);
         setChartDesign(chart);
         chart.invalidate();
-        CurveFitHelper ch = new CurveFitHelper();
+        //CurveFitHelper ch = new CurveFitHelper();
         //RelativeLayout.LayoutParams chartParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
 
         // TODO Research why the hell the layouts used in documentation to display graph don't work but specifically an absolute layout does???
+        // TODO Look into changing the relative layout into something better like a constraint layout
         rl.addView(chart, new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, AbsListView.LayoutParams.MATCH_PARENT));
         this.addContentView(rl, rlParams);
 
@@ -69,7 +74,7 @@ public class TrainingBarPathActivity extends AppCompatActivity
             // chart.centerViewTo(chart.getData().getDataSetByIndex(0).);
             chart.invalidate();
         });
-        chartUpdateListener.startChartUpdates();
+        setCountDown(chartUpdateListener);
     }
     private void setAxisDesign(LineChart chart)
     {
@@ -97,5 +102,36 @@ public class TrainingBarPathActivity extends AppCompatActivity
         chart.getDescription().setEnabled(false);
         chart.getLegend().setEnabled(false);
         setAxisDesign(chart);
+    }
+    private void setCountDown(LineChartWorker chartWorker)
+    {
+        countdownText = new TextView(TrainingBarPathActivity.this);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+        countdownText.setLayoutParams(params);
+        countdownText.setTextSize(30);
+        cdt = new CountDownTimer(5000, 1000) {
+            @Override
+            public void onTick(long l) {
+                countdownText.setText(Long.toString(l/1000));
+            }
+
+            @Override
+            public void onFinish() {
+                chartWorker.startChartUpdates();
+            }
+        };
+    }
+    private void destroyCountDownTimer()
+    {
+        if(cdt != null)
+        {
+            cdt.cancel();
+        }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        destroyCountDownTimer();
     }
 }
