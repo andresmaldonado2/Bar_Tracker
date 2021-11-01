@@ -64,6 +64,9 @@ public class TrainingBarPathActivity extends AppCompatActivity
             chartData = data;
             // TODO figure this out later chart.moveViewToX(chartData.getEntryCount()/2 - 1);
             chart.notifyDataSetChanged();
+            // I might have to call this after every data change?
+            // chart.setVisibleXRangeMaximum(2f);
+            // chart.centerViewTo(chart.getData().getDataSetByIndex(0).);
             chart.invalidate();
         });
         chartUpdateListener.startChartUpdates();
@@ -78,19 +81,21 @@ public class TrainingBarPathActivity extends AppCompatActivity
         xAxis.setTextColor(0xFFFFFFFF);
         yAxis.setDrawGridLines(false);
         xAxis.setDrawGridLines(false);
-
+        yAxis.setDrawAxisLine(false);
+        xAxis.setDrawAxisLine(false);
     }
     private void setLineDataSetDesign(LineDataSet lineDataSet)
     {
         lineDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
         lineDataSet.setLineWidth(LINE_WIDTH);
-        lineDataSet.setFillColor(LINE_COLOR);
+        lineDataSet.setColor(LINE_COLOR);
         lineDataSet.setDrawCircles(false);
     }
     private void setChartDesign(LineChart chart)
     {
         chart.setGridBackgroundColor(0xFFFFFFFF);
-        //chart.setVisibleXRange(0, 15);
+        chart.getDescription().setEnabled(false);
+        chart.getLegend().setEnabled(false);
         setAxisDesign(chart);
     }
 }

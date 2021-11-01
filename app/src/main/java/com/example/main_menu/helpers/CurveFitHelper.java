@@ -58,7 +58,7 @@ public class CurveFitHelper
             yVector[i] = positionData[i][1];
         }
         // Equation for this is ((X^t*X)^-1)*X^t*y
-        double[] result = multiplyMatrices(multiplyMatrices(inverseMatrix(multiplyMatrices(transposedMatrix, matrix)), transposedMatrix), yVector);
+        double[] result = multiplyMatrices(unthreadedMultiplyMatrix(unthreadedInverseMatrix(unthreadedMultiplyMatrix(transposedMatrix, matrix)), transposedMatrix), yVector);
         System.out.println(Arrays.toString(result));
         return (result);
     }
@@ -177,6 +177,38 @@ public class CurveFitHelper
                 }
                 productMatrix[z][i] = result;
             }
+        }
+        return productMatrix;
+    }
+    public double[][] differentMultiplyMatrix(double[][] aMatrix, double[][] bMatrix)
+    {
+        double[][] productMatrix = new double[aMatrix.length][bMatrix[0].length];
+        CountDownLatch latch = new CountDownLatch(productMatrix[0].length);
+        for (int i = 0; i < productMatrix[0].length; i++)
+        {
+            int finalI = i;
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    for (int z = 0; z < aMatrix.length; z++)
+                    {
+                        double result = 0.0;
+                        for (int a = 0; a < aMatrix[0].length; a++)
+                        {
+                            result = result + (aMatrix[z][a] * bMatrix[a][finalI]);
+                        }
+                        productMatrix[z][finalI] = result;
+                        latch.countDown();
+                    }
+                }
+            });
+        }
+        try {
+            latch.await();
+        }
+        catch (InterruptedException e)
+        {
+
         }
         return productMatrix;
     }

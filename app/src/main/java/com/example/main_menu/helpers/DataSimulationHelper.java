@@ -10,6 +10,9 @@ public class DataSimulationHelper
 {
     private static Random rand;
     private final static double HEIGHT_OF_BAR_PATH = 12;
+    // for the sake of demonstration however, we'll say this individual can survive a real grinder of a rep
+    // That way its more obvious the time is increasing
+    private final double MAXIMUM_LIFT_TIME = 4.5;
     // Because of sin wave used in simulation, the number used in the formula is doubled
     private final static double CALC_HEIGHT = HEIGHT_OF_BAR_PATH / 2;
     private final static double STARTING_CONCENTRIC_TIME_INTERVAL = 1.2;
@@ -37,7 +40,7 @@ public class DataSimulationHelper
 
     public double[] nextDataPoint()
     {
-        if(timeInterval < 4.0 && numberOfRepsPerformed < numberOfExpectedReps)
+        if(timeInterval < MAXIMUM_LIFT_TIME) //&& numberOfRepsPerformed < numberOfExpectedReps)
         {
             if(concentricPath)
             {
@@ -80,9 +83,9 @@ public class DataSimulationHelper
         double intervalChange = rand.nextDouble();
         // Equation works out so that when #ofRepsPerformed == #ofExpectedReps a increase in time is guaranteed
         // since f(#ofExpectedReps) always equals 1.0
-        if(intervalChange > ((1.0/Math.pow(numberOfExpectedReps, 3.0)) * Math.pow(numberOfRepsPerformed,3.0)))
+        if(intervalChange < ((1.0/Math.pow(numberOfExpectedReps, 3.0)) * Math.pow(numberOfRepsPerformed,3.0)))
         {
-            return intervalChange * 0.75;
+            return intervalChange;
         }
         else
         {

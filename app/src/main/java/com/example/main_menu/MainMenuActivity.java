@@ -3,11 +3,15 @@ package com.example.main_menu;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.navigation.Navigation;
 
 import com.example.main_menu.databinding.ActivityMainBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
 
 public class MainMenuActivity extends AppCompatActivity
 {
@@ -26,6 +30,15 @@ public class MainMenuActivity extends AppCompatActivity
             {
                 Intent i = new Intent(getApplicationContext(), TrainingBarPathActivity.class);
                 startActivity(i);
+            }
+        });
+        ImageButton navBarButton = findViewById(R.id.navBarButton);
+        navBarButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NavigationView nav = findViewById(R.id.navViewBody);
+                DrawerLayout.LayoutParams
+                nav;
             }
         });
     }
