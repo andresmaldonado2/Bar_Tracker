@@ -14,6 +14,16 @@
     <string name="navViewTraining">Training</string>
     <string name="navViewPastWorkouts">Past Workouts</string>
     <string name="title_activity_settings">SettingsActivity</string>
+    <string name="exerciseTextInputHint">Enter exercise here</string>
+
+    <!-- Exercise Types Autofill Hints -->
+    <!-- TODO Go onto bodybuilding.com and add all the different exercises to this array -->
+    <string-array name="exerciseAutofillHints">
+        <item>Squats</item>
+        <item>Bench Press</item>
+        <item>Deadlift</item>
+        <item>Overhead Press</item>
+    </string-array>
 
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>

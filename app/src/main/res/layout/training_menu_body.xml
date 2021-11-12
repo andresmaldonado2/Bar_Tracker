@@ -26,7 +26,7 @@
         android:textSize="12sp"/>
 
     <EditText
-        android:id="@+id/plain_text_input"
+        android:id="@+id/weight_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="48sp"
@@ -36,6 +36,21 @@
         android:hint="@string/enterWeightOfBarContentDescription"
         android:importantForAutofill="no"
         android:inputType="number"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/white"/>
+
+    <EditText
+        android:id="@+id/exercise_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48sp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:hint="@string/exerciseTextInputHint"
+        android:importantForAutofill="no"
+        android:autofillHints="@string/exerciseAutofillHints"
+        android:inputType="text"
         android:textColor="@color/white"
         android:backgroundTint="@color/white"/>
 

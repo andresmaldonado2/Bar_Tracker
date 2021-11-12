@@ -5,6 +5,8 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.File;
+
 public class PastWorkoutsActivity extends AppCompatActivity
 {
     @Override
@@ -12,5 +14,13 @@ public class PastWorkoutsActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_past_workouts);
+        File[] files = new File("/path/to/the/directory").listFiles();
+        if(files != null)
+        {
+            for (File file : files)
+            {
+
+            }
+        }
     }
 }
