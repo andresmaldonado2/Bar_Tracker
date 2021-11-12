@@ -2,15 +2,19 @@ package com.example.main_menu;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.navigation.Navigation;
 
 import com.example.main_menu.databinding.ActivityMainBinding;
-import com.example.main_menu.ui.TrainingBarPathActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
 
 public class MainMenuActivity extends AppCompatActivity
 {
@@ -29,6 +33,14 @@ public class MainMenuActivity extends AppCompatActivity
             {
                 Intent i = new Intent(getApplicationContext(), TrainingBarPathActivity.class);
                 startActivity(i);
+            }
+        });
+        ImageButton navBarButton = findViewById(R.id.navBarButton);
+        navBarButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DrawerLayout drawer = findViewById(R.id.root);
+                drawer.openDrawer(GravityCompat.START);
             }
         });
     }

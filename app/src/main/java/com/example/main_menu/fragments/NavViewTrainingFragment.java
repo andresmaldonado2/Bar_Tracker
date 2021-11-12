@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment;
 
 import com.example.main_menu.MainMenuActivity;
 import com.example.main_menu.R;
-import com.example.main_menu.ui.TrainingBarPathActivity;
 
 public class NavViewTrainingFragment extends Fragment
 {

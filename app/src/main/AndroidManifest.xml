@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.TrainingBarPathActivity"
+            android:name=".TrainingBarPathActivity"
             tools:ignore="LockedOrientationActivity">
         </activity>
         <activity android:name=".SettingsActivity">

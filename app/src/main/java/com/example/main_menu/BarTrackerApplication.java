@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
 
 public class BarTrackerApplication extends Application
 {
-    private static int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
+    private final static int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
     ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_CORES);
     Handler mainThreadHandler = HandlerCompat.createAsync(Looper.getMainLooper());
 }
