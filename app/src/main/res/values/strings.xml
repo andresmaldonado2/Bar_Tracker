@@ -16,6 +16,11 @@
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="exerciseTextInputHint">Enter exercise here</string>
 
+    <!--Snackbars-->
+    <string name="incorrectWeightInputSnackbar">Please enter a weight to continue</string>
+    <string name="incorrectExerciseInputSnackbar">Please enter an exercise to continue</string>
+    <string name="incorrectMeasurementUnitInputSnackbar">Please choose a unit of measurement (LB or KG)</string>
+
     <!-- Exercise Types Autofill Hints -->
     <!-- TODO Go onto bodybuilding.com and add all the different exercises to this array -->
     <string-array name="exerciseAutofillHints">

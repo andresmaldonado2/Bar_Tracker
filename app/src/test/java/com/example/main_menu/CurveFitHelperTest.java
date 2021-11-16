@@ -121,7 +121,6 @@ public class CurveFitHelperTest
             assertEquals(expectedMatrixResult[i], actualMatrixResult[i], epsilon);
         }
     }
-    // TODO Results are accurate but I'm losing precision somewhere in the math, need to investigate further.
     // Appears as if at worst I have only 2 decimal places of accuracy
     // Very small chance the accuracy is fine and the things I'm checking against are the ones that are inaccurate
 

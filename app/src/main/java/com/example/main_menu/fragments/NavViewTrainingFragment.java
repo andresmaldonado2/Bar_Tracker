@@ -7,11 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.main_menu.MainMenuActivity;
 import com.example.main_menu.R;
+import com.example.main_menu.viewmodels.NavigationViewModel;
 
 public class NavViewTrainingFragment extends Fragment
 {
@@ -24,23 +27,12 @@ public class NavViewTrainingFragment extends Fragment
     // This event is triggered soon after onCreateView().
     // Any view setup should occur here.  E.g., view lookups and attaching view listeners.
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        NavigationViewModel viewModel = new ViewModelProvider(requireActivity()).get((NavigationViewModel.class));
         LinearLayout trainingMenuButton = view.findViewById(R.id.trainingMenuButtonFragment);
         trainingMenuButton.setOnClickListener(v -> {
-            if(v.getRootView().getId() != R.id.root)
-            {
-                Intent i = new Intent(view.getContext(), MainMenuActivity.class);
-                startActivity(i);
-            }
-            else
-            {
-                // I know that every one of my screens at the moment has a drawer as the root view
-                // Rn, so this technically does work
-                // Very ugly, but does work
-                // TODO figure out a more elegant way to do this instead of just casting to a drawer layout
-                DrawerLayout temp = (DrawerLayout) view.getRootView();
-                temp.closeDrawers();
-            }
+            viewModel.setTrainingButtonListener(1);
         });
     }
 }

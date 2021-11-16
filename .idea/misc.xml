@@ -4,12 +4,14 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/drawable/button_border.xml" value="0.5069444444444444" />
+        <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/drawable/ic_baseline_arrow_back_24.xml" value="0.3111111111111111" />
         <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/drawable/ic_baseline_insert_chart_outlined_24.xml" value="0.3828125" />
         <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/drawable/ic_baseline_settings_24.xml" value="0.3828125" />
         <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/drawable/ic_dumbbell_white.xml" value="0.3828125" />
         <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/layout/activity_main.xml" value="0.4" />
         <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/layout/activity_past_workouts.xml" value="0.36666666666666664" />
         <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/layout/fragment_button.xml" value="0.36666666666666664" />
+        <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/layout/fragment_dashboard.xml" value="0.4925925925925926" />
         <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/layout/fragment_home.xml" value="0.36666666666666664" />
         <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/layout/nav_bar_header.xml" value="0.67" />
         <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/layout/nav_header_main.xml" value="0.4925925925925926" />
@@ -23,6 +25,7 @@
         <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/layout/settings_main.xml" value="0.4925925925925926" />
         <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/layout/settings_preference_fragment.xml" value="0.4925925925925926" />
         <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/layout/training_menu_body.xml" value="0.25416666666666665" />
+        <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/layout/workout_save_fragment.xml" value="0.4925925925925926" />
         <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/xml/root_preferences.xml" value="0.4925925925925926" />
         <entry key="..\:/Bar_Tracker/Bar_Tracker/app/src/main/res/xml/settings_preference_fragment.xml" value="0.29074074074074074" />
       </map>

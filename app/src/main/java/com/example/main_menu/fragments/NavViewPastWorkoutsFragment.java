@@ -1,17 +1,18 @@
 package com.example.main_menu.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
-import com.example.main_menu.PastWorkoutsActivity;
 import com.example.main_menu.R;
+import com.example.main_menu.viewmodels.NavigationViewModel;
 
 public class NavViewPastWorkoutsFragment extends Fragment
 {
@@ -24,24 +25,14 @@ public class NavViewPastWorkoutsFragment extends Fragment
     // This event is triggered soon after onCreateView().
     // Any view setup should occur here.  E.g., view lookups and attaching view listeners.
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState)
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
     {
+        super.onViewCreated(view, savedInstanceState);
+        NavigationViewModel viewModel = new ViewModelProvider(requireActivity()).get((NavigationViewModel.class));
         LinearLayout pastWorkoutsButton = view.findViewById(R.id.pastWorkoutsMenuButtonFragment);
         pastWorkoutsButton.setOnClickListener(v -> {
-            if(v.getRootView().getId() != R.id.pastWorkoutsRootView)
-            {
-                Intent i = new Intent(view.getContext(), PastWorkoutsActivity.class);
-                startActivity(i);
-            }
-            else
-            {
-                // I know that every one of my screens at the moment has a drawer as the root view
-                // Rn, so this technically does work
-                // Very ugly, but does work
-                // TODO figure out a more elegant way to do this instead of just casting to a drawer layout
-                DrawerLayout temp = (DrawerLayout) view.getRootView();
-                temp.closeDrawers();
-            }
+            viewModel.setPastWorkoutButtonListener(1);
+            Log.d("DEBUG", "Button was clicked");
         });
     }
 }
