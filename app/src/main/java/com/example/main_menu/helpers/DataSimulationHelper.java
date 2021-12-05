@@ -17,8 +17,9 @@ public class DataSimulationHelper
     private final double CALC_HEIGHT = HEIGHT_OF_BAR_PATH / 2;
     private final double STARTING_CONCENTRIC_TIME_INTERVAL = 1.2;
     private final double ECCENTRIC_TIME_INTERVAL = 0.5;
-
+    private final double DISTANCE_OF_TRACKER_FROM_BAR;
     private double timeElapsed;
+
     private boolean concentricPath;
     private double timeInterval;
     private double totalTimeElapsed;
@@ -26,7 +27,8 @@ public class DataSimulationHelper
     private int numberOfRepsPerformed;
     private int numberOfExpectedReps;
 
-    public DataSimulationHelper(int expectedReps)
+
+    public DataSimulationHelper(int expectedReps, double distanceFromBar)
     {
         timeElapsed = 0;
         timeInterval = STARTING_CONCENTRIC_TIME_INTERVAL;
@@ -36,17 +38,17 @@ public class DataSimulationHelper
         numberOfRepsPerformed = 0;
         concentricPath = true;
         numberOfExpectedReps = expectedReps;
+        DISTANCE_OF_TRACKER_FROM_BAR = distanceFromBar;
     }
 
-    public double[] nextDataPoint()
+    private Double calculateYDataPoint()
     {
         if(timeInterval < MAXIMUM_LIFT_TIME) //&& numberOfRepsPerformed < numberOfExpectedReps)
         {
             if(concentricPath)
             {
-                double[] temp = new double[2];
-                temp[0] = totalTimeElapsed;
-                temp[1] = -1 * CALC_HEIGHT * Math.sin(((Math.PI / timeInterval) * timeElapsed) + (0.5 * Math.PI)) + CALC_HEIGHT;
+                double temp;
+                temp = -1 * CALC_HEIGHT * Math.sin(((Math.PI / timeInterval) * timeElapsed) + (0.5 * Math.PI)) + CALC_HEIGHT;
                 totalTimeElapsed = totalTimeElapsed + initialTimeInterval;
                 timeElapsed = timeElapsed + initialTimeInterval;
                 if(timeElapsed > timeInterval)
@@ -58,9 +60,8 @@ public class DataSimulationHelper
             }
             else
             {
-                double[] temp = new double[2];
-                temp[0] = totalTimeElapsed;
-                temp[1] = CALC_HEIGHT * Math.sin(((Math.PI / ECCENTRIC_TIME_INTERVAL) * timeElapsed) + (0.5 * Math.PI)) + CALC_HEIGHT;
+                double temp;
+                temp= CALC_HEIGHT * Math.sin(((Math.PI / ECCENTRIC_TIME_INTERVAL) * timeElapsed) + (0.5 * Math.PI)) + CALC_HEIGHT;
                 totalTimeElapsed = totalTimeElapsed + initialTimeInterval;
                 timeElapsed = timeElapsed + initialTimeInterval;
                 if(timeElapsed > ECCENTRIC_TIME_INTERVAL)
@@ -77,6 +78,20 @@ public class DataSimulationHelper
         {
             return null;
         }
+    }
+    public double[] nextDataPoint()
+    {
+        Double temp = calculateYDataPoint();
+        if(temp != null)
+        {
+            double distance = Math.sqrt(Math.pow(temp,2) + Math.pow(DISTANCE_OF_TRACKER_FROM_BAR, 2));
+            double angle = Math.asin(temp/distance);
+            double[] dataPoint = new double[2];
+            dataPoint[0] = distance;
+            dataPoint[1] = angle;
+            return dataPoint;
+        }
+        return null;
     }
     private double generateIntervalIncrease(int numberOfRepsPerformed, int numberOfExpectedReps)
     {

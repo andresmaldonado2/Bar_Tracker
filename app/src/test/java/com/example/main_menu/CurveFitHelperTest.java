@@ -43,7 +43,7 @@ public class CurveFitHelperTest
     @Test
     public void testQuasiMaxStrainQuadraticRegression()
     {
-        DataSimulationHelper sim = new DataSimulationHelper(1);
+        DataSimulationHelper sim = new DataSimulationHelper(1, 12);
         // Calculated this by taking the standard initial concentric of 1.2 seconds
         // divided by the standard initial time interval
         double[][] testData = new double[75][2];
@@ -61,7 +61,7 @@ public class CurveFitHelperTest
     @Test
     public void testUnthreadedMultiplyMatrix()
     {
-        DataSimulationHelper sim = new DataSimulationHelper(1);
+        DataSimulationHelper sim = new DataSimulationHelper(1, 12);
         // Calculated this by taking the standard initial concentric of 1.2 seconds
         // divided by the standard initial time interval
         double[][] testData = new double[75][2];
@@ -156,7 +156,10 @@ public class CurveFitHelperTest
             {5,4}
         };
         double[] expectedResults = new double[]{0.9973, -5.0755, 3.0678, -0.3868};
+        Long start = System.currentTimeMillis();
         double[] actualResults = curveHelper.vectorProjection(testData,3);
+        Long end = System.currentTimeMillis();
+        System.out.println("Time spent: " + (end - start));
         double epsilon = 0.01d;
         for (int i = 0; i < expectedResults.length; i++)
         {

@@ -15,6 +15,7 @@ import com.github.mikephil.charting.data.LineDataSet;
 public class LineChartWorker {
     private int TIME_INTERVAL = 16;
     private final int NUMBER_OF_EXPECTED_REPS = 5;
+    private final double DISTANCE_FROM_TRACKER = 1.5;
     private RealTimeDataListener dataListener;
     private DataSimulationHelper sim;
     private double[] dataPointSim = new double[2];
@@ -23,7 +24,7 @@ public class LineChartWorker {
 
     public LineChartWorker(WorkoutData data) {
         this.data = data;
-        sim = new DataSimulationHelper(NUMBER_OF_EXPECTED_REPS);
+        sim = new DataSimulationHelper(NUMBER_OF_EXPECTED_REPS, DISTANCE_FROM_TRACKER);
     }
 
     public void setRealTimeDataListener(RealTimeDataListener dataListener) {

@@ -244,7 +244,7 @@ matrixArrStruct* inverseMatrix(matrixArrStruct *data)
     inverseStruct->arr = inverseMatrix;
     return inverseStruct;
 }
-jdoubleArray vectorProjection(jarray posDataJArray, double** posData, int len, int degree, JNIEnv *env)
+jdoubleArray vectorProjectionFunc(jarray posDataJArray, double** posData, int len, int degree, JNIEnv *env)
 {
     /*
     double **temp = (double **)malloc(sizeof(double *) * 2 + sizeof(double) * len * 2);
@@ -311,4 +311,19 @@ jdoubleArray vectorProjection(jarray posDataJArray, double** posData, int len, i
     free(finalResult->arr);
     free(finalResult);
     return finalJArray;
+}
+JNIEXPORT jdoubleArray JNICALL Java_com_example_main_1menu_helpers_CurveFitJNI_vectorProjection (JNIEnv *env, jobject obj, jdoubleArray posData, jint degree)
+{
+    // gcc -g -Werror -o test_app test.c matrixLib.c -lm -Ofast -I%JAVA_HOME%\include -I%JAVA_HOME%\include\win32
+    jint arrLen = (*env)->GetArrayLength(env, posData);
+
+    double **positionData = (*env)->GetPrimitiveArrayCritical(env,posData, 0);
+    if(positionData == NULL)
+    {
+        // TODO Print out error here (C doesnt have exceptions) strerror perror stuff
+    }
+    else
+    {
+        return vectorProjectionFunc(posData, positionData, arrLen, degree, env);
+    }
 }

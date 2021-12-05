@@ -14,5 +14,5 @@ matrixArrStruct* adjointMatrix(matrixArrStruct *data);
 matrixArrStruct* inverseMatrix(matrixArrStruct *data);
 double* determinantMatrix(matrixArrStruct *data);
 matrixArrStruct* laplaceExpansion(matrixArrStruct *data, int rowSkip, int colSkip);
-jdoubleArray vectorProjection(jarray posDataJArray, double** posData, int len, int degree, JNIEnv *env);
+jdoubleArray vectorProjectionFunc(jarray posDataJArray, double** posData, int len, int degree, JNIEnv *env);
 #endif

@@ -1,0 +1,4 @@
+java -XX:+CreateMinidumpOnCrash -cp "D:\Bar_Tracker\Bar_Tracker\app\src\main\java" com.example.main_menu.helpers.CurveFitJNI -Djava.library.path="D:\Bar_Tracker\Bar_Tracker\c_src" -XX:+CreateCoredumpOnCrash
+gcc -shared -o native.dll matrixLib.o -Wl,--add-stdcall-alias
+gcc -c matrixLib.c -o matrixLib.o -I"%JAVA_HOME%\include" -I"%JAVA_HOME%\include\win32" -g -Ofast
+javac -h . "D:\Bar_Tracker\Bar_Tracker\app\src\main\java\com\example\main_menu\helpers\CurveFitJNI.java"

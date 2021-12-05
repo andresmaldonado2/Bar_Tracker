@@ -11,7 +11,7 @@ public class DataSimulationHelperTest
     @Test
     public void createSimulationDataTest()
     {
-        DataSimulationHelper sim = new DataSimulationHelper(5);
+        DataSimulationHelper sim = new DataSimulationHelper(5, 12);
         double[] data = sim.nextDataPoint();
         System.out.println(Arrays.toString(data));
     }
