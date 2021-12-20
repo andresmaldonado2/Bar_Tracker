@@ -270,6 +270,43 @@ double calculateYCoordinate(double distance, double angle)
 {
     return distance * sin(angle * (M_PI / 180.0));
 }
+dataPointArr* newCalculatePositionalData(JNIEnv *env, jdoubleArray *posDataJArr, int sizeOfArr, int lastExtremaIndex)
+{
+    jsize length = (*env)->GetArrayLength(env, *posDataJArr);
+    jdouble positionDataJArr[length];
+    (*env)->GetDoubleArrayRegion(env, *posDataJArr, 0, length, positionDataJArr);
+
+    double **positionData = malloc(sizeof(double *) * sizeOfArr + sizeof(double) * 2 * sizeOfArr);
+    double *ptr = (double *)(positionData + sizeOfArr);
+    for(int i = 0; i < sizeOfArr; i++)
+    {
+        *(positionData + i) = (ptr + 2 * i);
+    }
+    double **positionHeightOverTime = malloc(sizeof(double *) * sizeOfArr + sizeof(double) * 2 * sizeOfArr);
+    double *overTimePtr = (double *)(positionHeightOverTime + sizeOfArr);
+    for(int i = 0; i < sizeOfArr; i++)
+    {
+        *(positionHeightOverTime + i) = (overTimePtr + 2 * i);
+    }
+
+    int count = 0;
+    // Change the size variable here doesn't look like it makes sense
+    for(int i = 0; i < sizeOfArr; i++)
+    {
+        *(*(positionData + i)) = calculateXCoordinate(positionDataJArr[count], positionDataJArr[count + 1]);
+        *(*(positionData + i) + 1) = calculateYCoordinate(positionDataJArr[count], positionDataJArr[count + 1]);
+        //printf("NORMAL X: %lf Y: %lf\n", positionData[i][0], positionData[i][1]);
+        *(*(positionHeightOverTime + i)) = (i + lastExtremaIndex) * (1/FREQUENCY_OF_TRACKER_SIGNAL);
+        *(*(positionHeightOverTime + i) + 1) = calculateYCoordinate(positionDataJArr[count], positionDataJArr[count + 1]);
+        //printf("OVERTIME X: %lf Y: %lf\n", positionHeightOverTime[i][0], positionHeightOverTime[i][1]);
+        count += 2;
+    }
+    dataPointArr *positionArr = malloc(sizeof(dataPointArr));
+    positionArr->arr = positionData;
+    positionArr->size = sizeOfArr;
+    positionArr->arrOverTime = positionHeightOverTime;
+    return positionArr;
+}
 dataPointArr* calculatePositionalData(JNIEnv *env, jdoubleArray *posDataJArr, int sizeOfArr, int lastExtremaIndex)
 {
     jsize length = (*env)->GetArrayLength(env, *posDataJArr);
@@ -545,6 +582,20 @@ double averageForceProduction(dataPointArr *posDataArray, localExtremaStruct *lo
        }
     return avgForce;
 }
+double forceProduction(dataPointArr *posDataArray, double intialVelocity, int weight, bool inKG)
+{
+    int convertedWeight;
+    if(!inKG)
+    {
+        convertedWeight = convertLBToKG(weight);
+    }
+    else
+    {
+        convertedWeight = weight;
+    }
+    double force = (convertedWeight * (currentVelocity(posDataArray, posDataArray->size - 2, posDataArray->size - 1) - intialVelocity) / (calculateTime(posDataArray->size - 1) - calculateTime(posDataArray-> size - 2)));
+    return force;
+}
 JNIEXPORT jdoubleArray JNICALL Java_CurveFitJNI_performanceMetrics(JNIEnv *env, jobject obj, jdoubleArray posDataJArr, jint lastExtremaIndex, jint size, jint degree, jint weight, jdouble intialVelocity, jboolean inKG)
 {
     jdouble *finalResults = malloc(sizeof(double) * 3);
@@ -552,10 +603,10 @@ JNIEXPORT jdoubleArray JNICALL Java_CurveFitJNI_performanceMetrics(JNIEnv *env, 
     *actualLastExtremaIndex = lastExtremaIndex;
     if(size > 5)
     {
-        dataPointArr *positionDataStruct = calculatePositionalData(env, &posDataJArr, size, lastExtremaIndex);
+        dataPointArr *positionDataStruct = newCalculatePositionalData(env, &posDataJArr, size, lastExtremaIndex);
         double *coefficients = vectorProjection(positionDataStruct->arrOverTime, positionDataStruct->size, degree);
         localExtremaStruct *localExtrema = findLocalExtrema(positionDataStruct, actualLastExtremaIndex, coefficients, degree);
-        double avgForce = averageForceProduction(positionDataStruct, localExtrema, intialVelocity, weight, inKG);
+        double avgForce = forceProduction(positionDataStruct, intialVelocity, weight, inKG);
         
         *finalResults = avgForce;
         *(finalResults + 1) = currentVelocity(positionDataStruct, positionDataStruct->size - 2, positionDataStruct->size - 1);
