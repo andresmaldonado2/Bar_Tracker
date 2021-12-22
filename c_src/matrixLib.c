@@ -56,15 +56,6 @@ matrixArrStruct* multiplyMatrix(matrixArrStruct *matrixAStruct, matrixArrStruct 
 
 double* multiplyMatrix1D(matrixArrStruct *matrixAStruct, double **matrixB)
 {
-    /*
-    double **productMatrix = (double **)malloc(sizeof(double *) * matrixAStruct->rows + sizeof(double) * matrixAStruct->rows);
-    double *ptr = (double *)(productMatrix + matrixAStruct->rows);
-    for(int i = 0; i < matrixAStruct->rows; i++)
-    {
-        // remember I took out middle term in ptr + i
-        *(productMatrix + i) = (ptr + i);
-    }
-    */
     double result = 0.0;
     double *productMatrix = malloc(sizeof(double) * (matrixAStruct->rows));
     for(int i = 0; i < (matrixAStruct->rows); i++)
@@ -175,14 +166,11 @@ double* determinantMatrix(matrixArrStruct *data)
     int sign = 1;
     if(data->rows == 1)
     {
-        //TODO I swear I need to free data and data->arr here but it seems like its a double free?
-        // Check for memory leaks
         *determinantPtr = **(data->arr);
         return determinantPtr;
     }  
     for(int i = 0; i < data->rows; i++)
     {
-        //TODO Free laplace matrix by keeping pointer in separate variable
         matrixArrStruct *cofactorMatrix = laplaceExpansion(data, 0, i);
         double *det = determinantMatrix(cofactorMatrix);
         *determinantPtr += sign * (*(*data->arr + i)) * *det;
@@ -209,7 +197,6 @@ matrixArrStruct* adjointMatrix(matrixArrStruct *data)
         {
             // Rows and columns are fliped for adjointMatrix to perform the transpose part of the equation
             // Faster to do here than go through every element again in transposeMatrix function
-            //TODO Free laplace matrix by keeping pointer in separate variable
             matrixArrStruct *cofactorMatrix = laplaceExpansion(data, i, z);
             double *det = determinantMatrix(cofactorMatrix);
             if ((i+z) % 2 == 0)
@@ -270,14 +257,47 @@ double calculateYCoordinate(double distance, double angle)
 {
     return distance * sin(angle * (M_PI / 180.0));
 }
+dataPointArr* newCalculatePositionalData(JNIEnv *env, jdoubleArray *posDataJArr, int sizeOfArr, int lastExtremaIndex)
+{
+    jsize length = (*env)->GetArrayLength(env, *posDataJArr);
+    jdouble positionDataJArr[length];
+    (*env)->GetDoubleArrayRegion(env, *posDataJArr, 0, length, positionDataJArr);
+
+    double **positionData = malloc(sizeof(double *) * sizeOfArr + sizeof(double) * 2 * sizeOfArr);
+    double *ptr = (double *)(positionData + sizeOfArr);
+    for(int i = 0; i < sizeOfArr; i++)
+    {
+        *(positionData + i) = (ptr + 2 * i);
+    }
+    double **positionHeightOverTime = malloc(sizeof(double *) * sizeOfArr + sizeof(double) * 2 * sizeOfArr);
+    double *overTimePtr = (double *)(positionHeightOverTime + sizeOfArr);
+    for(int i = 0; i < sizeOfArr; i++)
+    {
+        *(positionHeightOverTime + i) = (overTimePtr + 2 * i);
+    }
+
+    int count = 0;
+    for(int i = 0; i < sizeOfArr; i++)
+    {
+        *(*(positionData + i)) = calculateXCoordinate(positionDataJArr[count], positionDataJArr[count + 1]);
+        *(*(positionData + i) + 1) = calculateYCoordinate(positionDataJArr[count], positionDataJArr[count + 1]);
+
+        *(*(positionHeightOverTime + i)) = (i + lastExtremaIndex) * (1/FREQUENCY_OF_TRACKER_SIGNAL);
+        *(*(positionHeightOverTime + i) + 1) = calculateYCoordinate(positionDataJArr[count], positionDataJArr[count + 1]);
+        count += 2;
+    }
+    dataPointArr *positionArr = malloc(sizeof(dataPointArr));
+    positionArr->arr = positionData;
+    positionArr->size = sizeOfArr;
+    positionArr->arrOverTime = positionHeightOverTime;
+    return positionArr;
+}
 dataPointArr* calculatePositionalData(JNIEnv *env, jdoubleArray *posDataJArr, int sizeOfArr, int lastExtremaIndex)
 {
     jsize length = (*env)->GetArrayLength(env, *posDataJArr);
     jdouble positionDataJArr[length];
     (*env)->GetDoubleArrayRegion(env, *posDataJArr, 0, length, positionDataJArr);
 
-    //int size = sizeOfArr - lastExtremaIndex;
-    //printf("SIZEOFARR: %d\n", sizeOfArr);
     double **positionData = malloc(sizeof(double *) * (sizeOfArr - lastExtremaIndex + 1) + sizeof(double) * 2 * (sizeOfArr - lastExtremaIndex + 1));
     double *ptr = (double *)(positionData + (sizeOfArr - lastExtremaIndex + 1));
     for(int i = 0; i < (sizeOfArr - lastExtremaIndex + 1); i++)
@@ -291,15 +311,13 @@ dataPointArr* calculatePositionalData(JNIEnv *env, jdoubleArray *posDataJArr, in
         *(positionHeightOverTime + i) = (overTimePtr + 2 * i);
     }
     int count = (2 * lastExtremaIndex);
-    // Change the size variable here doesn't look like it makes sense
     for(int i = 0; i < (sizeOfArr - lastExtremaIndex); i++)
     {
         *(*(positionData + i)) = calculateXCoordinate(positionDataJArr[count], positionDataJArr[count + 1]);
         *(*(positionData + i) + 1) = calculateYCoordinate(positionDataJArr[count], positionDataJArr[count + 1]);
-        //printf("NORMAL X: %lf Y: %lf\n", positionData[i][0], positionData[i][1]);
+
         *(*(positionHeightOverTime + i)) = (i + lastExtremaIndex) * (1/FREQUENCY_OF_TRACKER_SIGNAL);
         *(*(positionHeightOverTime + i) + 1) = calculateYCoordinate(positionDataJArr[count], positionDataJArr[count + 1]);
-        //printf("OVERTIME X: %lf Y: %lf\n", positionHeightOverTime[i][0], positionHeightOverTime[i][1]);
         count += 2;
     }
     dataPointArr *positionArr = malloc(sizeof(dataPointArr));
@@ -308,12 +326,6 @@ dataPointArr* calculatePositionalData(JNIEnv *env, jdoubleArray *posDataJArr, in
     positionArr->arrOverTime = positionHeightOverTime;
     return positionArr;
 }
-/*
-double currentVelocityJArr(jdoubleArray posData)
-{
-
-}
-*/
 
 localExtremaStruct* findLocalExtrema(dataPointArr *positionData, int *actualLastExtremaIndex, double *coefficents, int degree)
 {
@@ -338,7 +350,6 @@ localExtremaStruct* findLocalExtrema(dataPointArr *positionData, int *actualLast
     {
         printf("%lf ", *(newCoefficents + i));
     }
-    //Need to do one without check to see if intial slope is negative or positive
     double result = 0.0;
     for(int k = 0; k < degree; k++)
     {
@@ -397,7 +408,6 @@ double pythagoreanTheorem(double xDistance, double yDistance)
 
 double totalDistanceTraveledBetweenTwoPoints(double **positionData, int startPointIndex, int endPointIndex)
 {
-    //TODO Maybe make totalDistance traveled a global? IDK yet
     double totalDistanceTraveled;
     totalDistanceTraveled = 0.0;
     for(int i = startPointIndex + 1; i <= endPointIndex; i++)
@@ -406,86 +416,15 @@ double totalDistanceTraveledBetweenTwoPoints(double **positionData, int startPoi
     }
     return totalDistanceTraveled;
 }
-/*
-double height(matrixArrStruct *positionData, double *localExtrema)
-{
-    return *(localExtrema + 1)
-}
-*/
+
 double currentVelocity(dataPointArr *positionData, int startPointIndex, int endPointIndex)
 {
+    printf("Distance traveled: %lf\n", totalDistanceTraveledBetweenTwoPoints(positionData->arr, startPointIndex, endPointIndex));
     return totalDistanceTraveledBetweenTwoPoints(positionData->arr, startPointIndex, endPointIndex) / (calculateTime(endPointIndex) - calculateTime(startPointIndex));
 }
-/*
-JNIEXPORT jdoubleArray JNICALL Java_CurveFitJNI_vectorProjection (JNIEnv *env, jobject obj, jdoubleArray posData, jint size, jint degree)
-{
-    double **positionData = calculatePositionalData(*env, posData, size);
-    
-    double *finalDoubleArrPtr;
-    jdoubleArray finalJArray = (*env)->NewDoubleArray(env, 4);
-    
-    matrixArrStruct *positionDataStruct = malloc(sizeof(matrixArrStruct));
-    positionDataStruct->rows = size;
-    positionDataStruct->cols = 2;
-    positionDataStruct->arr = positionData;
-    matrixArrStruct **matrices = createMatrices(positionDataStruct, degree);
-    matrixArrStruct *createdMatrix = *matrices;
-    matrixArrStruct *transposedCreatedMatrix = *(matrices + 1);
-    double **yVector = (double **)malloc(sizeof(double *) * positionDataStruct->rows + sizeof(double) * positionDataStruct->rows);
-    double *ptr = (double *)(yVector + positionDataStruct->rows);
-    for(int i = 0; i < positionDataStruct->rows; i++)
-    {
-        *(yVector + i) = (ptr + i);
-    }
-    for(int i = 0; i < positionDataStruct->rows; i++)
-    {
-        **(yVector + i) = *(*(positionDataStruct->arr + i) + 1);
-    }
 
-    matrixArrStruct *result = malloc(sizeof(matrixArrStruct));
-    result = multiplyMatrix(*(matrices + 1), *matrices);
-    free((*matrices)->arr);
-    free(*matrices);
-    matrixArrStruct *inverseResult = malloc(sizeof(matrixArrStruct));
-    inverseResult = inverseMatrix(result);
-    free(result->arr);
-    free(result);
-    matrixArrStruct *inverseXTransposeResult = malloc(sizeof(matrixArrStruct));
-    inverseXTransposeResult = multiplyMatrix(inverseResult, *(matrices + 1));
-    free(inverseResult->arr);
-    free(inverseResult);
-    free((*(matrices + 1))->arr);
-    free(*(matrices + 1));
-    free(matrices);
-    finalDoubleArrPtr = multiplyMatrix1D(inverseXTransposeResult, yVector);
-
-    printf("Start results: \n");
-    for(int i = 0; i < 4; i++)
-    {
-        printf("%lf ", finalDoubleArrPtr[i]);
-    }
-    printf("End results\n");
-
-    (*env)->SetDoubleArrayRegion(env, finalJArray, 0, 4, finalDoubleArrPtr);
-
-    free(yVector);
-    free(inverseXTransposeResult->arr);
-    free(inverseXTransposeResult);
-    return finalJArray;
-
-}
-*/
 double* vectorProjection(double **positionData, int size, int degree)
 {
-    /*
-    printf("SIZE: %d", size);
-    printf("START POS DATA\n");
-    for(int i = 0; i < size; i++)
-    {
-        printf("X: %lf Y: %lf\n", *(*(positionData + i)), *(*(positionData + i) + 1));
-    }
-    printf("\nEND\n");
-    */
     matrixArrStruct *positionDataStruct = malloc(sizeof(matrixArrStruct));
     positionDataStruct->rows = size;
     positionDataStruct->cols = 2;
@@ -545,27 +484,32 @@ double averageForceProduction(dataPointArr *posDataArray, localExtremaStruct *lo
        }
     return avgForce;
 }
-JNIEXPORT jdoubleArray JNICALL Java_CurveFitJNI_performanceMetrics(JNIEnv *env, jobject obj, jdoubleArray posDataJArr, jint lastExtremaIndex, jint size, jint degree, jint weight, jdouble intialVelocity, jboolean inKG)
+double forceProduction(dataPointArr *posDataArray, double intialVelocity, int weight, bool inKG)
 {
-    jdouble *finalResults = malloc(sizeof(double) * 3);
-    int *actualLastExtremaIndex = malloc(sizeof(int));
-    *actualLastExtremaIndex = lastExtremaIndex;
-    if(size > 5)
+    int convertedWeight;
+    if(!inKG)
     {
-        dataPointArr *positionDataStruct = calculatePositionalData(env, &posDataJArr, size, lastExtremaIndex);
-        double *coefficients = vectorProjection(positionDataStruct->arrOverTime, positionDataStruct->size, degree);
-        localExtremaStruct *localExtrema = findLocalExtrema(positionDataStruct, actualLastExtremaIndex, coefficients, degree);
-        double avgForce = averageForceProduction(positionDataStruct, localExtrema, intialVelocity, weight, inKG);
-        
-        *finalResults = avgForce;
-        *(finalResults + 1) = currentVelocity(positionDataStruct, positionDataStruct->size - 2, positionDataStruct->size - 1);
-        *(finalResults + 2) = (double)*actualLastExtremaIndex;
+        convertedWeight = convertLBToKG(weight);
     }
     else
     {
-        *finalResults = 0.0;
-        *(finalResults + 1) = 0.0;
-        *(finalResults + 2) = 0.0;
+        convertedWeight = weight;
+    }
+    double force = fabs((convertedWeight * (currentVelocity(posDataArray, posDataArray->size - 2, posDataArray->size - 1) - intialVelocity) / calculateTime(1)));
+    return force;
+}
+
+JNIEXPORT jdoubleArray JNICALL Java_CurveFitJNI_performanceMetrics(JNIEnv *env, jobject obj, jdoubleArray posDataJArr, jint weight, jdouble intialVelocity, jboolean inKG)
+{
+    // If bar is going down defaults to zero
+    jdouble *finalResults = calloc(3, sizeof(double));
+    dataPointArr *positionDataStruct = newCalculatePositionalData(env, &posDataJArr, 2, 0);
+    // If the bar went is going up and not down
+    if(*(*(positionDataStruct->arr) + 1) < (*(*(positionDataStruct->arr + 1) + 1)))
+    {
+        *finalResults = forceProduction(positionDataStruct, intialVelocity, weight, inKG);
+        *(finalResults + 1) = fabs(currentVelocity(positionDataStruct, positionDataStruct->size - 2, positionDataStruct->size - 1));
+        *(finalResults + 2) = 1.0;
     }
     jdoubleArray finalResultsJArr = (*env)->NewDoubleArray(env, 3);
     (*env)->SetDoubleArrayRegion(env, finalResultsJArr, 0, 3, finalResults);

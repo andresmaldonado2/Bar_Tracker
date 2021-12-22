@@ -38,6 +38,6 @@ double totalDistanceTraveledBetweenTwoPoints(double **positionData, int startPoi
 double currentVelocity(dataPointArr *positionData, int startPointIndex, int endPointIndex);
 double* vectorProjection(double **positionData, int size, int degree);
 double averageForceProduction(dataPointArr *posDataArray, localExtremaStruct *localExtrema, double intialVelocity, int weight, bool inKG);
-JNIEXPORT jdoubleArray JNICALL Java_CurveFitJNI_performanceMetrics(JNIEnv *env, jobject obj, jdoubleArray posDataJArr, jint lastExtremaIndex, jint size, jint degree, jint weight, jdouble intialVelocity, jboolean inKG);
+JNIEXPORT jdoubleArray JNICALL Java_CurveFitJNI_performanceMetrics(JNIEnv *env, jobject obj, jdoubleArray posDataJArr, jint weight, jdouble intialVelocity, jboolean inKG);
 
 #endif

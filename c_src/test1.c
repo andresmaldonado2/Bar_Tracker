@@ -95,7 +95,6 @@ void testCalculatePositionalData(void)
         *(positionData + i) = (ptr + 2 * i);
     }
     int count = (2 * lastExtremaIndex);
-    // Change the size variable here doesn't look like it makes sense
     for(int i = 0; i < (sizeOfArr - lastExtremaIndex); i++)
     {
         *(*(positionData + i)) = calculateXCoordinate(actualTestArr[count], actualTestArr[count + 1]);
@@ -166,49 +165,6 @@ void testFindLocalExtrema(void)
 
 int main(void)
 {
-    /*
-    matrixArrStruct *testStruct = malloc(sizeof(matrixArrStruct));
-    testStruct->rows = 3;
-    testStruct->cols = 3;
-    double testArr[3][3] = {
-                {2,4,9},
-                {7,6,1},
-                {5,9,3}
-    };
-    double **actualTestArr = (double **)malloc(sizeof(double *) * 3 + sizeof(double) * 3 * 3);
-    double *ptr = (double *)(actualTestArr + 3);
-    for(int i = 0; i < 3; i++)
-    {
-        *(actualTestArr + i) = (ptr + 3 * i);
-    }
-    for(int i = 0; i < 3; i++)
-    {
-        for(int z = 0; z < 3; z++)
-        {
-            *(*(actualTestArr + i) + z) = testArr[i][z];
-        }
-    }
-    testStruct->arr = actualTestArr;
-    double **testingArr = malloc(sizeof(double *) * 3 + sizeof(double) * 3);
-    double *testPtr = (double *)(testingArr + 3);
-    for(int i = 0; i < 3; i++)
-    {
-        *(testingArr + i) = (testPtr + 1 * i);
-    }
-    **(testingArr) = 8;
-    **(testingArr + 1) = 6;
-    **(testingArr + 2) = 3;
-    double *resultArr = multiplyMatrix1D(testStruct, testingArr);
-    
-    printf("START\n");
-    for(int i = 0; i < 3; i++)
-    {
-        printf("%lf ", *(resultArr + i));
-    }
-    printf("END\n");
-    */
-
-
     testCurrentVelocity();
     testTotalDistanceTraveledBetweenTwoPoints();
     testVectorProjection();

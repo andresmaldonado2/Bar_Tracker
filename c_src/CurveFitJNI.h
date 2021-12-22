@@ -10,10 +10,10 @@ extern "C" {
 /*
  * Class:     CurveFitJNI
  * Method:    performanceMetrics
- * Signature: ([DIIIIDZ)[D
+ * Signature: ([DIDZ)[D
  */
 JNIEXPORT jdoubleArray JNICALL Java_CurveFitJNI_performanceMetrics
-  (JNIEnv *, jobject, jdoubleArray, jint, jint, jint, jint, jdouble, jboolean);
+  (JNIEnv *, jobject, jdoubleArray, jint, jdouble, jboolean);
 
 #ifdef __cplusplus
 }

@@ -451,6 +451,7 @@ double height(matrixArrStruct *positionData, double *localExtrema)
 */
 double currentVelocity(dataPointArr *positionData, int startPointIndex, int endPointIndex)
 {
+    printf("Distance traveled: %lf\n", totalDistanceTraveledBetweenTwoPoints(positionData->arr, startPointIndex, endPointIndex));
     return totalDistanceTraveledBetweenTwoPoints(positionData->arr, startPointIndex, endPointIndex) / (calculateTime(endPointIndex) - calculateTime(startPointIndex));
 }
 /*
@@ -593,9 +594,10 @@ double forceProduction(dataPointArr *posDataArray, double intialVelocity, int we
     {
         convertedWeight = weight;
     }
-    double force = (convertedWeight * (currentVelocity(posDataArray, posDataArray->size - 2, posDataArray->size - 1) - intialVelocity) / (calculateTime(posDataArray->size - 1) - calculateTime(posDataArray-> size - 2)));
+    double force = fabs((convertedWeight * (currentVelocity(posDataArray, posDataArray->size - 2, posDataArray->size - 1) - intialVelocity) / calculateTime(1)));
     return force;
 }
+/*
 JNIEXPORT jdoubleArray JNICALL Java_CurveFitJNI_performanceMetrics(JNIEnv *env, jobject obj, jdoubleArray posDataJArr, jint lastExtremaIndex, jint size, jint degree, jint weight, jdouble intialVelocity, jboolean inKG)
 {
     jdouble *finalResults = malloc(sizeof(double) * 3);
@@ -609,7 +611,7 @@ JNIEXPORT jdoubleArray JNICALL Java_CurveFitJNI_performanceMetrics(JNIEnv *env, 
         double avgForce = forceProduction(positionDataStruct, intialVelocity, weight, inKG);
         
         *finalResults = avgForce;
-        *(finalResults + 1) = currentVelocity(positionDataStruct, positionDataStruct->size - 2, positionDataStruct->size - 1);
+        *(finalResults + 1) = fabs(currentVelocity(positionDataStruct, positionDataStruct->size - 2, positionDataStruct->size - 1));
         *(finalResults + 2) = (double)*actualLastExtremaIndex;
     }
     else
@@ -617,6 +619,29 @@ JNIEXPORT jdoubleArray JNICALL Java_CurveFitJNI_performanceMetrics(JNIEnv *env, 
         *finalResults = 0.0;
         *(finalResults + 1) = 0.0;
         *(finalResults + 2) = 0.0;
+    }
+    jdoubleArray finalResultsJArr = (*env)->NewDoubleArray(env, 3);
+    (*env)->SetDoubleArrayRegion(env, finalResultsJArr, 0, 3, finalResults);
+    return finalResultsJArr;
+}
+*/
+JNIEXPORT jdoubleArray JNICALL Java_CurveFitJNI_performanceMetrics(JNIEnv *env, jobject obj, jdoubleArray posDataJArr, jint weight, jdouble intialVelocity, jboolean inKG)
+{
+    // If bar is going down defaults to zero
+    jdouble *finalResults = calloc(3, sizeof(double));
+    dataPointArr *positionDataStruct = newCalculatePositionalData(env, &posDataJArr, 2, 0);
+    /*
+    for(int i = 0; i < 2; i++)
+    {
+        printf("X: %lf Y: %lf\n", *(*(positionDataStruct->arr + i)), *(*(positionDataStruct->arr + i) + 1));
+    }
+    */
+    // If the bar went is going up and not down
+    if(*(*(positionDataStruct->arr) + 1) < (*(*(positionDataStruct->arr + 1) + 1)))
+    {
+        *finalResults = forceProduction(positionDataStruct, intialVelocity, weight, inKG);
+        *(finalResults + 1) = fabs(currentVelocity(positionDataStruct, positionDataStruct->size - 2, positionDataStruct->size - 1));
+        *(finalResults + 2) = 1.0;
     }
     jdoubleArray finalResultsJArr = (*env)->NewDoubleArray(env, 3);
     (*env)->SetDoubleArrayRegion(env, finalResultsJArr, 0, 3, finalResults);
