@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import androidx.annotation.IdRes;
@@ -13,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.util.Pair;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
@@ -98,6 +100,13 @@ public class PastWorkoutsActivity extends AppCompatActivity
             Log.d("DEBUG", "Couldn't find list of files");
         }
         setContentView(R.layout.activity_past_workouts);
+        ImageButton navBarButton = findViewById(R.id.navBarButton);
+        navBarButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((DrawerLayout)findViewById(R.id.pastWorkoutsRootView)).openDrawer(GravityCompat.START);
+            }
+        });
     }
     private Bundle createMetaDataBundle(File file)
     {

@@ -7,15 +7,7 @@ public class CurveFitJNI
         //System.out.println(System.getProperty("java.library.path"));
         System.loadLibrary("Native");
     }
-    /*
-    private native double[] vectorProjection(double[] positionData, int size, int degree);
-    //private native double[] rateOfForceDevelopment();
-    
-    private native double[][] performanceMetrics(double[] positionData, int size, int weight, boolean inKG);
-    private native double maximumVelocity(double[] positionData, int size);
-    private native double averageVelocity(double[] positionData, int size);
-    private native double averageForceProduction();
-    */
+
     private native double[] performanceMetrics(double[] positionData, int weight, double intialVelocity, boolean inKG);
     public static void main(String[] args)
     {
@@ -33,13 +25,7 @@ public class CurveFitJNI
         int degree = 3;
         int weight = 450;
         boolean inKG = false;
-        /*
-        long startTime = System.nanoTime();
-        //double[] data = new CurveFitJNI().performanceMetrics(newPositionData, 0, 1, degree, weight, 0.0, inKG);
-        long endTime = System.nanoTime();
-        System.out.println("Unoptimized Execution Time: " + ((endTime - startTime)/1000) + "microseconds");
-        System.out.println("BEGIN PROJECTION RESULTS:\n");
-        */
+
         double[] testArr = new double [15];
         int numOfReps = 0;
         int startCountOfRep = 0;
@@ -55,7 +41,7 @@ public class CurveFitJNI
         double[] results = new double[] {0.0, 0.0, 0.0};
         double[] jniData = new double[] {newPositionData[0], newPositionData[1], newPositionData[2], newPositionData[3]};
         int count = 1;
-        //int[] inputData = new int[] {0, newPositionData.length/2, degree, weight, intialVelocity, inKG, isConcentric};
+       
         for(int i = 4; i < newPositionData.length; i += 2)
         {
             results = new CurveFitJNI().performanceMetrics(jniData, weight, results[1], inKG);

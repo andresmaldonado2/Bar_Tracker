@@ -34,12 +34,6 @@ public class SaveWorkoutsHelper
                 JSONArray dataPoint = new JSONArray();
                 dataPoint.put(dataSet.getEntryForIndex(0).getX());
                 dataPoint.put(dataSet.getEntryForIndex(0).getY());
-                // TODO Seems like every single is a x y pair and not just a singular, change this...
-                // fuck me...
-                // Worried about memory issues when dealing with the entirety of the data points
-                // Already know that having two separate copies of the data in memory at once *will*
-                // cause an outofmemory error, need to delete what I copy
-                // I delete 0 twice because once I delete the x point, the y point which was at index 1 is now at index 0
                 dataSet.removeEntry(0);
                 dataPoints.put(dataPoint);
             }

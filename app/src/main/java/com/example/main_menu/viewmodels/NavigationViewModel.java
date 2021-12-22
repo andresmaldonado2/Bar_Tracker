@@ -8,7 +8,10 @@ import androidx.lifecycle.ViewModel;
 public class NavigationViewModel extends ViewModel
 {
     // TODO Figure out way to reset these to zero without screwing up other observers, cuz otherwise this is a theoretical overflow just waiting to happen
-    // Also just... for the love of god find a better fucking way then this hacked together shit
+    // NOTE FROM ANDRES TO PROFESSOR: I am pretty certain I overcomplicated this, and don't need to do all of this
+    // I was trying to make it so instead of reloading an activity that was already loaded it would
+    // Just close the drawer, but knowing how convoluted this solution is I am like 99% certain theres
+    // A proper way to do this I just did not find in my research
     private final MutableLiveData<Pair<Integer, Boolean>> pastWorkoutButtonListener = new MutableLiveData<>(new Pair<>(0, Boolean.FALSE));
     private final MutableLiveData<Pair<Integer, Boolean>> trainingButtonListener = new MutableLiveData<>(new Pair<>(0, Boolean.FALSE));
     private final MutableLiveData<Pair<Integer, Boolean>> settingsButtonListener = new MutableLiveData<>(new Pair<>(0, Boolean.FALSE));

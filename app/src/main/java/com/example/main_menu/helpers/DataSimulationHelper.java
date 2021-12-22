@@ -85,7 +85,14 @@ public class DataSimulationHelper
         if(temp != null)
         {
             double distance = Math.sqrt(Math.pow(temp,2) + Math.pow(DISTANCE_OF_TRACKER_FROM_BAR, 2));
-            double angle = Math.asin(temp/distance);
+            // It shouldn't occur with how the math is written but technically speaking it is possible
+            // For this to result in NaN and I should check to see that it hasn't
+            double tempAngle = Math.asin(temp/distance);
+            if(Double.isNaN(tempAngle))
+            {
+                throw new RuntimeException("Angle is measured is physically impossible, check sensor for damage");
+            }
+            double angle = Math.toDegrees(tempAngle);
             double[] dataPoint = new double[2];
             dataPoint[0] = distance;
             dataPoint[1] = angle;

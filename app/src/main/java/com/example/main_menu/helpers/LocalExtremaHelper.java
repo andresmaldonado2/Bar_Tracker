@@ -15,11 +15,11 @@ public class LocalExtremaHelper
     }
     public static double calculateXCoordinate(double distance, double angle)
     {
-        return distance * Math.sin(90.0 - angle);
+        return distance * Math.sin(Math.toRadians(90.0 - angle));
     }
     public static double calculateYCoordinate(double distance, double angle)
     {
-        return distance * Math.sin(angle);
+        return distance * Math.sin(Math.toRadians(angle));
     }
     public static double[][] firstDerivativeTest(double[] coefficients)
     {

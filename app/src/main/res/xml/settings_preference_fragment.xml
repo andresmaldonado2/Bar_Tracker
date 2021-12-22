@@ -15,10 +15,10 @@
         </ListPreference>
     </PreferenceCategory>
     <PreferenceCategory android:title="Notifications">
-        <Preference
+        <SwitchPreferenceCompat
             app:key="updateNotification"
             app:title="Send notification when new update is released">
-        </Preference>
+        </SwitchPreferenceCompat>
     </PreferenceCategory>
     <PreferenceCategory android:title="Workout Data">
         <Preference

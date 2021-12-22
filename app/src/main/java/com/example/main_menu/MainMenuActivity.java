@@ -44,7 +44,6 @@ public class MainMenuActivity extends AppCompatActivity
         SwitchMaterial lbSwitch = findViewById(R.id.lbMeasurementSwitch);
         SwitchMaterial kgSwitch = findViewById(R.id.kgMeasurementSwitch);
 
-        // TODO I'm pretty sure these dont actually have to be fragments negating all this shit, replace it with just a normal xml
         viewModel.getPastWorkoutButtonListener().observe(this, new Observer<Pair<Integer, Boolean>>() {
             @Override
             public void onChanged(Pair<Integer, Boolean> signal)

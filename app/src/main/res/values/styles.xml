@@ -3,13 +3,19 @@
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
 
     </style>
-    <style name="mainMenuSwitchStyle" parent="Theme.AppCompat.DayNight.NoActionBar">
-        <item name="android:colorControlActivated">@color/buttonRed</item>
+    <style name="mainMenuSwitchStyle" parent="AppTheme">
+        <item name="colorControlActivated">@color/buttonRed</item>
         <item name="android:colorForeground">@color/buttonRed</item>
+        <item name="colorAccent">@color/buttonRed</item>
     </style>
     <style name="navViewMenuButtons" parent="Theme.MaterialComponents.DayNight.NoActionBar.Bridge">
     </style>
-    <style name="PreferenceCategory" parent="Theme.AppCompat.DayNight.NoActionBar">
-        <item name="android:textColor">@color/buttonRed</item>
+    <style name="PreferenceCategoryTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <!--I don't like the way these colors look right now but I can't seem to find a way to
+        separate certain items colors short of a custom fragment entirely, so it'll have to do for now -->
+        <item name="android:textColorPrimary">#FF86898C</item>
+        <item name="colorAccent">@color/buttonRed</item>
+        <item name="android:textColorSecondary">@color/white</item>
+        <item name="textColorAlertDialogListItem">@color/black</item>
     </style>
 </resources>
