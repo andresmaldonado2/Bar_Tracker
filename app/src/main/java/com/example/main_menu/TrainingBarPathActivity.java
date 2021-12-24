@@ -16,15 +16,11 @@ import androidx.core.content.ContextCompat;
 
 import com.example.main_menu.callbacks.LineChartWorker;
 import com.example.main_menu.charting.WorkoutData;
-import com.example.main_menu.helpers.CurveFitHelper;
-import com.example.main_menu.helpers.PerformanceMetric;
 import com.example.main_menu.helpers.SaveWorkoutsHelper;
-import com.example.main_menu.interfaces.RealTimeDataListener;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -56,22 +52,45 @@ public class TrainingBarPathActivity extends AppCompatActivity
     private final float Y_AXIS_DEFAULT = 18.0f;
     private final float X_AXIS_DEFAULT = 36.0f;
     private LineChartWorker chartUpdateListener;
-    private DecimalFormat df = new DecimalFormat("#.##");
+    private final DecimalFormat df = new DecimalFormat("#.##");
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        // TODO Eventually transfer this over to a proper constraint layout rather than the relative layout
         super.onCreate(savedInstanceState);
         Bundle metaData = getIntent().getExtras();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         chart = new LineChart(getApplicationContext());
         rl = new RelativeLayout(getApplicationContext());
+        RelativeLayout.LayoutParams rlParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+        rl.setBackgroundColor(BACKGROUND_COLOR);
 
-        String[] metricNames = new String[] {"Average Force: ", "Peak Force: ", "Force During Rep: ", "Average Velocity: ", "Peak Velocity: ", "Current Velocity: ", "Reps Performed: "};
-        metricTextViews = new TextView[7];
+        setUpMetricViews();
+        setBackButton();
+        setChartDesign();
+        setAxisDesign();
+        setUpSaveData(metaData);
+        setUpGraphData(metaData);
+        chart.invalidate();
+        // TODO Research why the hell the layouts used in documentation to display graph don't work but specifically an absolute layout does???
+        // TODO Look into changing the relative layout into something better like a constraint layout
+        rl.addView(chart, new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, AbsListView.LayoutParams.MATCH_PARENT));
+        this.addContentView(rl, rlParams);
+        setChartUpdateListener(metaData);
+        setCountDown();
+    }
+    private void setUpMetricViews()
+    {
+        setMetricNameTextViews();
+        setMetricTextViews();
+        setMetricUnitTextViews();
+    }
+    private void setMetricNameTextViews()
+    {
         metricNameTextViews = new TextView[7];
-        metricUnitTextViews = new TextView[6];
+        String[] metricNames = new String[] {"Average Force: ", "Peak Force: ", "Force During Rep: ", "Average Velocity: ", "Peak Velocity: ", "Current Velocity: ", "Reps Performed: "};
         metricNameTextViews[0] = new TextView(TrainingBarPathActivity.this);
         metricNameTextViews[0].setId(View.generateViewId());
         RelativeLayout.LayoutParams metricNameTextViewParam = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -95,6 +114,10 @@ public class TrainingBarPathActivity extends AppCompatActivity
             metricNameTextViews[i].setText(metricNames[i]);
             rl.addView(metricNameTextViews[i]);
         }
+    }
+    private void setMetricTextViews()
+    {
+        metricTextViews = new TextView[7];
         metricTextViews[0] = new TextView(TrainingBarPathActivity.this);
         metricTextViews[0].setId(View.generateViewId());
         RelativeLayout.LayoutParams metricTextViewParam = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -116,6 +139,10 @@ public class TrainingBarPathActivity extends AppCompatActivity
             metricTextViews[i].setTextColor(ContextCompat.getColor(this, R.color.white));
             rl.addView(metricTextViews[i]);
         }
+    }
+    private void setMetricUnitTextViews()
+    {
+        metricUnitTextViews = new TextView[6];
         String[] metricUnits = new String[]{"N/in/s^2", "N/in/s^2", "N/in/s^2", "in/s", "in/s", "in/s"};
         metricUnitTextViews[0] = new TextView(TrainingBarPathActivity.this);
         metricUnitTextViews[0].setId(View.generateViewId());
@@ -140,71 +167,38 @@ public class TrainingBarPathActivity extends AppCompatActivity
             metricUnitTextViews[i].setText(metricUnits[i]);
             rl.addView(metricUnitTextViews[i]);
         }
-
-        backButton = new FloatingActionButton(TrainingBarPathActivity.this);
-        setBackButton(backButton);
-        rl.addView(backButton);
-        RelativeLayout.LayoutParams rlParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-        rl.setBackgroundColor(BACKGROUND_COLOR);
-
-        ArrayList<Entry> dataPoints = new ArrayList<>();
-        graphDataSet = new LineDataSet(dataPoints, "Test Data");
-        // Need to preload graph with something, else negative array size errors get thrown
-        // Something weird in the way the library was implemented, not noted in documentation either :shrug:
-        graphDataSet.addEntry(new Entry(0, 0));
-        setLineDataSetDesign(graphDataSet);
-
-        ArrayList<Entry> saveDataPoints = new ArrayList<>();
-        saveDataSet = new LineDataSet(saveDataPoints, "Test Data");
-        // Need to preload graph with something, else negative array size errors get thrown
-        // Something weird in the way the library was implemented, not noted in documentation either :shrug:
-        saveDataSet.addEntry(new Entry(0, 0));
-        saveData = new WorkoutData(saveDataSet);
-        saveData.setExerciseType(metaData.getString("exercise"));
-        saveData.setWeightAmount(Integer.parseInt(metaData.getString("weight")));
-        saveData.setMeasurementUnit(metaData.getString("measurementUnit"));
-
-        chartData = new WorkoutData(graphDataSet);
-        chartData.setExerciseType(metaData.getString("exercise"));
-        chartData.setWeightAmount(Integer.parseInt(metaData.getString("weight")));
-        chartData.setMeasurementUnit(metaData.getString("measurementUnit"));
-        chart.setData(chartData);
-        setChartDesign(chart);
-        chart.invalidate();
-
-        // TODO Research why the hell the layouts used in documentation to display graph don't work but specifically an absolute layout does???
-        // TODO Look into changing the relative layout into something better like a constraint layout
-        rl.addView(chart, new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, AbsListView.LayoutParams.MATCH_PARENT));
-        this.addContentView(rl, rlParams);
-        if(metaData.getString("measurementUnit").equals("kg"))
-        {
-            chartUpdateListener = new LineChartWorker(chartData, Integer.parseInt(metaData.getString("weight")), true);
-        }
-        else
-        {
-            chartUpdateListener = new LineChartWorker(chartData, Integer.parseInt(metaData.getString("weight")), false);
-        }
-        chartUpdateListener.setRealTimeDataListener((data, metrics) -> {
-            chartData = data;
-            updateTextViews(metrics);
-            Entry dataEntry = data.getDataSetByIndex(0).getEntryForIndex(0);
-            saveData.addEntry(dataEntry, 0);
-            if(dataEntry.getY() > yAxis.getAxisMaximum())
-            {
-                yAxis.setAxisMaximum(dataEntry.getY());
-            }
-            if(dataEntry.getX() > xAxis.getAxisMaximum())
-            {
-                // We want the data points to be in the middle of the graph, so I double it for the axis
-                // So the data is roughly center
-                xAxis.setAxisMaximum(dataEntry.getX() * 2);
-            }
-            chart.notifyDataSetChanged();
-            chart.invalidate();
-        });
-        setCountDown(rl, chartUpdateListener);
     }
-    private void setAxisDesign(LineChart chart)
+    private void setBackButton()
+    {
+        backButton = new FloatingActionButton(TrainingBarPathActivity.this);
+        // Needs to have unique ID set in order for rules to play nice
+        // IDK why, but it does work and its an easy fix so :shrug:
+        backButton.setId(View.generateViewId());
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        params.setMargins(0,0,8,8);
+        backButton.setLayoutParams(params);
+        backButton.setBackgroundTintList(getApplicationContext().getColorStateList(R.color.buttonRed));
+        backButton.setClickable(true);
+        backButton.setFocusable(true);
+        backButton.setImageResource(R.drawable.ic_baseline_arrow_back_24);
+        backButton.setOnClickListener(view -> {
+            chartData.setWorkoutEndTime(new Date());
+            saveData.setWorkoutEndTime(new Date());
+            SaveWorkoutsHelper.createSave(saveData, rl.getContext());
+            Intent i = new Intent(getApplicationContext(), MainMenuActivity.class);
+            startActivity(i);
+        });
+        rl.addView(backButton);
+    }
+    private void setChartDesign()
+    {
+        chart.setGridBackgroundColor(0xFFFFFFFF);
+        chart.getDescription().setEnabled(false);
+        chart.getLegend().setEnabled(false);
+    }
+    private void setAxisDesign()
     {
         yAxis = chart.getAxisLeft();
         xAxis = chart.getXAxis();
@@ -224,28 +218,81 @@ public class TrainingBarPathActivity extends AppCompatActivity
         xAxis.setAxisMaximum(X_AXIS_DEFAULT);
         xAxis.setAxisMinimum(0.0f);
     }
-    private void setLineDataSetDesign(LineDataSet lineDataSet)
+    private void setUpSaveData(Bundle metaData)
     {
-        lineDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-        lineDataSet.setLineWidth(LINE_WIDTH);
-        lineDataSet.setColor(LINE_COLOR);
-        lineDataSet.setDrawCircles(false);
-        lineDataSet.setCircleColor(LINE_COLOR);
-        lineDataSet.setCircleHoleColor(LINE_COLOR);
-        lineDataSet.setCircleRadius(10f);
+        // TODO Possible to optimize this? Does it need to be an ArrayList of specifically Entry? Investigate further
+        ArrayList<Entry> saveDataPoints = new ArrayList<>();
+        saveDataSet = new LineDataSet(saveDataPoints, "Test Data");
+        // Need to preload graph with something, else negative array size errors get thrown
+        // Something weird in the way the library was implemented, not noted in documentation either :shrug:
+        saveDataSet.addEntry(new Entry(0, 0));
+        saveData = new WorkoutData(saveDataSet);
+        saveData.setExerciseType(metaData.getString("exercise"));
+        saveData.setWeightAmount(Integer.parseInt(metaData.getString("weight")));
+        saveData.setMeasurementUnit(metaData.getString("measurementUnit"));
     }
-    private void setChartDesign(LineChart chart)
+    private void setUpGraphData(Bundle metaData)
     {
-        chart.setGridBackgroundColor(0xFFFFFFFF);
-        chart.getDescription().setEnabled(false);
-        chart.getLegend().setEnabled(false);
-        setAxisDesign(chart);
+        ArrayList<Entry> dataPoints = new ArrayList<>();
+        graphDataSet = new LineDataSet(dataPoints, "Test Data");
+        // Need to preload graph with something, else negative array size errors get thrown
+        // Something weird in the way the library was implemented, not noted in documentation either :shrug:
+        graphDataSet.addEntry(new Entry(0, 0));
+        setLineDataSetDesign();
+        chartData = new WorkoutData(graphDataSet);
+        chartData.setExerciseType(metaData.getString("exercise"));
+        chartData.setWeightAmount(Integer.parseInt(metaData.getString("weight")));
+        chartData.setMeasurementUnit(metaData.getString("measurementUnit"));
+        chart.setData(chartData);
     }
-    private void reenableCircles()
+    private void setLineDataSetDesign()
     {
-        graphDataSet.setDrawCircles(true);
+        graphDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+        graphDataSet.setLineWidth(LINE_WIDTH);
+        graphDataSet.setColor(LINE_COLOR);
+        graphDataSet.setDrawCircles(false);
+        graphDataSet.setCircleColor(LINE_COLOR);
+        graphDataSet.setCircleHoleColor(LINE_COLOR);
+        graphDataSet.setCircleRadius(10f);
     }
-    private void setCountDown(RelativeLayout rl, LineChartWorker chartWorker)
+    private void setChartUpdateListener(Bundle metaData)
+    {
+        chartUpdateListener = new LineChartWorker(
+                chartData,
+                Integer.parseInt(metaData.getString("weight")),
+                metaData.getString("measurementUnit").equals("kg")
+        );
+        chartUpdateListener.setRealTimeDataListener((data, metrics) -> {
+            chartData = data;
+            updateTextViews(metrics);
+            Entry dataEntry = data.getDataSetByIndex(0).getEntryForIndex(0);
+            saveData.addEntry(dataEntry, 0);
+            // Setting a fixed maximum for both of the axis means the library won't try and automatically
+            // Change the size to fit the data currently on the screen, which kinda defeats the entire goal
+            // Of what im doing here
+            if(dataEntry.getY() > yAxis.getAxisMaximum())
+            {
+                yAxis.setAxisMaximum(dataEntry.getY());
+            }
+            if(dataEntry.getX() > (xAxis.getAxisMaximum() / 2))
+            {
+                // We want the data points to be in the middle of the graph, so I double it for the axis
+                // So the data is roughly center
+                xAxis.setAxisMaximum(dataEntry.getX() * 2);
+            }
+            chart.notifyDataSetChanged();
+            chart.invalidate();
+        });
+    }
+    private void updateTextViews(double[] metrics)
+    {
+        int len = metricTextViews.length;
+        for(int i = 0; i < len; i++)
+        {
+            metricTextViews[i].setText(df.format(metrics[i]));
+        }
+    }
+    private void setCountDown()
     {
         countdownText = new TextView(TrainingBarPathActivity.this);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -255,6 +302,8 @@ public class TrainingBarPathActivity extends AppCompatActivity
         // Gonna be consistent with the shade of red used
         countdownText.setTextColor(LINE_COLOR);
         rl.addView(countdownText);
+        // TODO Make this only start counting once screen is fully drawn and responsive
+        // That way I don't have to do this hacky shit starting a full second early and hoping no one notices
         cdt = new CountDownTimer(6000, 1000) {
             @Override
             public void onTick(long l) {
@@ -267,10 +316,20 @@ public class TrainingBarPathActivity extends AppCompatActivity
                 chartData.setWorkoutStartTime(new Date());
                 saveData.setWorkoutStartTime(new Date());
                 reenableCircles();
-                chartWorker.startChartUpdates();
+                chartUpdateListener.startChartUpdates();
             }
         };
         cdt.start();
+    }
+    private void reenableCircles()
+    {
+        graphDataSet.setDrawCircles(true);
+    }
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        destroyCountDownTimer();
     }
     private void destroyCountDownTimer()
     {
@@ -278,43 +337,5 @@ public class TrainingBarPathActivity extends AppCompatActivity
         {
             cdt.cancel();
         }
-    }
-    private void setBackButton(FloatingActionButton backButton)
-    {
-        // Needs to have unique ID set in order for rules to play nice
-        // IDK why, but it does work and its an easy fix so :shrug:
-        backButton.setId(View.generateViewId());
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        params.setMargins(0,0,8,8);
-        backButton.setLayoutParams(params);
-        backButton.setBackgroundTintList(getApplicationContext().getColorStateList(R.color.buttonRed));
-        backButton.setClickable(true);
-        backButton.setFocusable(true);
-        backButton.setImageResource(R.drawable.ic_baseline_arrow_back_24);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                chartData.setWorkoutEndTime(new Date());
-                saveData.setWorkoutEndTime(new Date());
-                SaveWorkoutsHelper.createSave(saveData, rl.getContext());
-                Intent i = new Intent(getApplicationContext(), MainMenuActivity.class);
-                startActivity(i);
-            }
-        });
-    }
-    private void updateTextViews(double[] metrics)
-    {
-        int len = metricTextViews.length;
-        for(int i = 0; i < len; i++)
-        {
-            metricTextViews[i].setText(df.format(metrics[i]));
-        }
-    }
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        destroyCountDownTimer();
     }
 }
